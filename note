@@ -1,0 +1,24 @@
+班级表：
+CREATE TABLE `class`  (
+  `id` int(10) NOT NULL AUTO_INCREMENT COMMENT '班级主键',
+  `name` varchar(25) CHARACTER SET utf8 COLLATE utf8_general_ci DEFAULT NULL COMMENT '班级名称',
+  PRIMARY KEY (`id`) USING BTREE
+) ENGINE = InnoDB AUTO_INCREMENT = 4 CHARACTER SET = utf8 COLLATE = utf8_general_ci ROW_FORMAT = Compact COMMENT '班级表';
+
+INSERT INTO `class` VALUES (1, '一班');
+INSERT INTO `class` VALUES (2, '二班');
+INSERT INTO `class` VALUES (3, '三班');
+
+学生表
+CREATE TABLE `student`  (
+  `id` int(10) NOT NULL AUTO_INCREMENT COMMENT '学生主键',
+  `name` varchar(25) CHARACTER SET utf8 COLLATE utf8_general_ci DEFAULT NULL COMMENT '学生姓名',
+  `class_id` int(10) DEFAULT NULL COMMENT '班级主键',
+  `class_name` varchar(25) CHARACTER SET utf8 COLLATE utf8_general_ci DEFAULT NULL COMMENT '班级名称',
+  PRIMARY KEY (`id`) USING BTREE
+) ENGINE = InnoDB AUTO_INCREMENT = 5 CHARACTER SET = utf8 COLLATE = utf8_general_ci ROW_FORMAT = Compact COMMENT '学生表';
+
+INSERT INTO `student` VALUES (1, '张三', 1, '一班');
+INSERT INTO `student` VALUES (2, '李四', 1, '一班');
+INSERT INTO `student` VALUES (3, '王五', 2, '二班');
+INSERT INTO `student` VALUES (4, '赵六', 3, '三班');
