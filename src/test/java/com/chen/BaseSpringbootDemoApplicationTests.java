@@ -8,6 +8,7 @@ import org.junit.jupiter.api.Test;
 import org.junit.runner.RunWith;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.data.redis.core.RedisTemplate;
 import org.springframework.test.context.junit4.SpringRunner;
 
 import java.util.List;
@@ -20,7 +21,8 @@ class BaseSpringbootDemoApplicationTests {
     private StudentMapper studentMapper;
     @Autowired
     private ClassMapper classMapper;
-
+    @Autowired
+    private RedisTemplate redisTemplate;
 
     /**
      * 查询所有学生信息
@@ -67,5 +69,13 @@ class BaseSpringbootDemoApplicationTests {
     public void test05(){
         int value = studentMapper.update(new Student(),Wrappers.<Student>lambdaUpdate().set(Student::getName,"冥冥").eq(Student::getId,1));
         System.out.println(value);
+    }
+
+    @Test
+    public void test06(){
+        //redisTemplate.opsForValue().set("age",18);
+        Integer age = (Integer) redisTemplate.opsForValue().get("age");
+        //String name = (String) redisTemplate.opsForValue().get("key");
+        System.out.println(age);
     }
 }
