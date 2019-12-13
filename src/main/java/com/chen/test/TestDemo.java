@@ -1,6 +1,8 @@
 package com.chen.test;
 
+import com.chen.redis.RedisUtil;
 import org.junit.Test;
+import org.springframework.beans.factory.annotation.Autowired;
 import redis.clients.jedis.Jedis;
 import redis.clients.jedis.params.SetParams;
 
@@ -14,6 +16,9 @@ import java.util.Date;
  * @Author: chenjianwen
  */
 public class TestDemo {
+
+    @Autowired
+    private RedisUtil redisUtil;
 
     @Test
     public void test01() throws ParseException {
@@ -59,6 +64,8 @@ public class TestDemo {
 
     @Test
     public void test05(){
+        redisUtil.set("soil", "cloud");
+        System.out.println(redisUtil.get("soil"));
     }
 
 }

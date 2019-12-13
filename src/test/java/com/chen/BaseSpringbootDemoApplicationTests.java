@@ -4,6 +4,7 @@ import com.baomidou.mybatisplus.core.toolkit.Wrappers;
 import com.chen.mysql.dao.ClassMapper;
 import com.chen.mysql.dao.StudentMapper;
 import com.chen.mysql.model.Student;
+import com.chen.redis.RedisUtil;
 import org.junit.jupiter.api.Test;
 import org.junit.runner.RunWith;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -23,6 +24,8 @@ class BaseSpringbootDemoApplicationTests {
     private ClassMapper classMapper;
     @Autowired
     private RedisTemplate redisTemplate;
+    @Autowired
+    private RedisUtil redisUtil;
 
     /**
      * 查询所有学生信息
@@ -77,5 +80,12 @@ class BaseSpringbootDemoApplicationTests {
         Integer age = (Integer) redisTemplate.opsForValue().get("age");
         //String name = (String) redisTemplate.opsForValue().get("key");
         System.out.println(age);
+    }
+
+    @Test
+    public void test07(){
+//        redisUtil.set("device", "computer");
+//        System.out.println(redisUtil.get("device"));
+        redisUtil.delete("device");
     }
 }
