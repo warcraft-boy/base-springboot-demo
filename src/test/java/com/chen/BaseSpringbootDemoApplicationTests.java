@@ -73,7 +73,7 @@ class BaseSpringbootDemoApplicationTests {
 
     @Test
     public void test06(){
-        //redisTemplate.opsForValue().set("age",18);
+        redisTemplate.opsForValue().set("age",18);
         Integer age = (Integer) redisTemplate.opsForValue().get("age");
         //String name = (String) redisTemplate.opsForValue().get("key");
         System.out.println(age);
