@@ -6,7 +6,7 @@ import redis.clients.jedis.Jedis;
 import redis.clients.jedis.JedisPool;
 
 /**
- * @Description: <br>使用jedis实现redis操作工具类
+ * @Description: 使用jedis实现redis操作工具类
  * @Date: Created in 2019/12/13 <br>
  * @Author: chenjianwen
  */
