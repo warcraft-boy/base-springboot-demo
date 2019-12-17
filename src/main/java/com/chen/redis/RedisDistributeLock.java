@@ -15,7 +15,7 @@ public class RedisDistributeLock {
 
     private static final String LOCK_SUCCESS = "OK";
     private static final String SET_IF_NOT_EXIST = "NX";
-    private static final String SET_WITH_EXPIRE_TIME = "OK";
+    private static final String SET_WITH_EXPIRE_TIME = "EX";
     private static final String LUA_SCRIPT = "if redis.call('get', KEYS[1]) == ARGV[1] then return redis.call('del', KEYS[1]) else return 0 end";
     private static final Long RELEASE_SUCCESS = 1L;
 
