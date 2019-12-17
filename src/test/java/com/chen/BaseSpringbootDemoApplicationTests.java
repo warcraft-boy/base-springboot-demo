@@ -1,6 +1,8 @@
 package com.chen;
 
 import com.baomidou.mybatisplus.core.toolkit.Wrappers;
+import com.chen.mongodb.model.User;
+import com.chen.mongodb.repository.UserRepository;
 import com.chen.mysql.dao.ClassMapper;
 import com.chen.mysql.dao.StudentMapper;
 import com.chen.mysql.model.Student;
@@ -29,6 +31,8 @@ class BaseSpringbootDemoApplicationTests {
     private RedisUtil redisUtil;
     @Autowired
     private StringRedisTemplate stringRedisTemplate;
+    @Autowired
+    private UserRepository userRepository;
 
     /**
      * 查询所有学生信息
@@ -90,5 +94,25 @@ class BaseSpringbootDemoApplicationTests {
 //        redisUtil.set("device", "computer");
 //        System.out.println(redisUtil.get("device"));
         redisUtil.delete("device");
+    }
+
+    /**
+     * mongodb插入数据测试
+     */
+    @Test
+    public void test08(){
+        User user = new User();
+        user.setName("重楼");
+        user.setAge(21);
+        userRepository.save(user);
+    }
+
+    /**
+     * mongodb查询数据测试
+     */
+    @Test
+    public void test09(){
+        List<User> users = userRepository.findAll();
+        System.out.println(users);
     }
 }

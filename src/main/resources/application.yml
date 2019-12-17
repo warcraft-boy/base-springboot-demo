@@ -30,6 +30,11 @@ spring:
     username: root
     password: 123456
 
+  #mongodb
+  mongodb:
+    host: localhost
+    port: 27017
+    database: test
 
 mybatis:
   mapper-location: classpath:mapper/*.xml
