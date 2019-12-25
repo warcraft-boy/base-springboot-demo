@@ -1,8 +1,11 @@
 package com.chen.redis;
 
+import org.redisson.Redisson;
+import org.redisson.api.RLock;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.redis.core.StringRedisTemplate;
 
+import java.util.UUID;
 import java.util.concurrent.TimeUnit;
 
 /**
@@ -14,6 +17,8 @@ public class RedisLockDemo {
 
     @Autowired
     private StringRedisTemplate stringRedisTemplate;
+    @Autowired
+    private Redisson redisson;
 
     /**
      * 出现问题：多线程情况下出现超卖现象
@@ -131,15 +136,16 @@ public class RedisLockDemo {
     }
 
     /**
-     * 出现问题：失效时间不知道具体值，如果线程的执行时间大于失效时间，那么释放锁之前该锁就会失效，下一个线程就会进来，这样两个或多个线程同时存在，回归到第一个问题，出现“超卖”
-     * 解决方法：
+     * 出现问题：失效时间不知道具体值，如果线程的执行时间大于失效时间，那么释放锁之前该锁就会失效，即后面的线程释放了前面线程的锁，下一个线程就会进来，这样两个或多个线程同时存在，回归到第一个问题，出现“超卖”
+     * 解决方法：value的值不再写死，每个线程拥有自己的value，释放所之前判断这把锁是不是自己的
      *
      * @return
      */
     public String demo6() {
         String lockKey = "product_001";
+        String clientId = UUID.randomUUID().toString();
         try {
-            Boolean result = stringRedisTemplate.opsForValue().setIfAbsent(lockKey, "stock", 10, TimeUnit.SECONDS);
+            Boolean result = stringRedisTemplate.opsForValue().setIfAbsent(lockKey, clientId, 10, TimeUnit.SECONDS);
             if (!result) {
                 return "error";
             }
@@ -151,8 +157,41 @@ public class RedisLockDemo {
                 System.out.println("扣减失败，库存不足");
             }
         } finally {
-            //释放锁
-            stringRedisTemplate.delete(lockKey);
+            if(clientId.equals(stringRedisTemplate.opsForValue().get(lockKey))){
+                //释放锁
+                stringRedisTemplate.delete(lockKey);
+            }
+        }
+        return "end";
+    }
+
+    /**
+     * 出现问题：失效时间还没有更好的解决
+     * 解决方法：使用redisson在线程内部再开启一个子线程给此线程续命
+     *
+     * @return
+     */
+    public String demo7() {
+        String lockKey = "product_001";
+        String clientId = UUID.randomUUID().toString();
+        RLock redissonLock = redisson.getLock(lockKey);
+        try {
+            Boolean result = stringRedisTemplate.opsForValue().setIfAbsent(lockKey, clientId, 10, TimeUnit.SECONDS);
+            if (!result) {
+                return "error";
+            }
+            //在业务代码之前用redisson锁续命此线程
+            redissonLock.lock(10, TimeUnit.SECONDS);
+            int stock = Integer.parseInt(stringRedisTemplate.opsForValue().get("stock"));
+            if (stock > 0) {
+                int leftStock = stock - 1;
+                stringRedisTemplate.opsForValue().set("stock", leftStock + "");
+            } else {
+                System.out.println("扣减失败，库存不足");
+            }
+        } finally {
+            //redisson释放锁
+            redissonLock.unlock();
         }
         return "end";
     }
