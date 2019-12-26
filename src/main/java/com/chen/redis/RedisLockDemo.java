@@ -176,12 +176,12 @@ public class RedisLockDemo {
         String clientId = UUID.randomUUID().toString();
         RLock redissonLock = redisson.getLock(lockKey);
         try {
-            Boolean result = stringRedisTemplate.opsForValue().setIfAbsent(lockKey, clientId, 10, TimeUnit.SECONDS);
+            Boolean result = stringRedisTemplate.opsForValue().setIfAbsent(lockKey, clientId, 30, TimeUnit.SECONDS);
             if (!result) {
                 return "error";
             }
             //在业务代码之前用redisson锁续命此线程
-            redissonLock.lock(10, TimeUnit.SECONDS);
+            redissonLock.lock(30, TimeUnit.SECONDS);
             int stock = Integer.parseInt(stringRedisTemplate.opsForValue().get("stock"));
             if (stock > 0) {
                 int leftStock = stock - 1;
@@ -195,4 +195,36 @@ public class RedisLockDemo {
         }
         return "end";
     }
+
+    /**
+     * 出现问题：redis集群下，主redis节点挂掉，锁未同步到新的主节点上，后面的线程会同时持有该锁，也会出现"超卖"现象
+     * 解决方法：
+     *
+     * @return
+     */
+    public String demo8() {
+        String lockKey = "product_001";
+        String clientId = UUID.randomUUID().toString();
+        RLock redissonLock = redisson.getLock(lockKey);
+        try {
+            Boolean result = stringRedisTemplate.opsForValue().setIfAbsent(lockKey, clientId, 30, TimeUnit.SECONDS);
+            if (!result) {
+                return "error";
+            }
+            //在业务代码之前用redisson锁续命此线程
+            redissonLock.lock(30, TimeUnit.SECONDS);
+            int stock = Integer.parseInt(stringRedisTemplate.opsForValue().get("stock"));
+            if (stock > 0) {
+                int leftStock = stock - 1;
+                stringRedisTemplate.opsForValue().set("stock", leftStock + "");
+            } else {
+                System.out.println("扣减失败，库存不足");
+            }
+        } finally {
+            //redisson释放锁
+            redissonLock.unlock();
+        }
+        return "end";
+    }
+
 }
