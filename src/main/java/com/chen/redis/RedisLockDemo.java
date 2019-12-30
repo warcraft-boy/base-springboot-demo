@@ -207,12 +207,14 @@ public class RedisLockDemo {
         String clientId = UUID.randomUUID().toString();
         RLock redissonLock = redisson.getLock(lockKey);
         try {
+            //redisson开启锁
             Boolean result = stringRedisTemplate.opsForValue().setIfAbsent(lockKey, clientId, 30, TimeUnit.SECONDS);
             if (!result) {
                 return "error";
             }
             //在业务代码之前用redisson锁续命此线程
             redissonLock.lock(30, TimeUnit.SECONDS);
+            //业务代码
             int stock = Integer.parseInt(stringRedisTemplate.opsForValue().get("stock"));
             if (stock > 0) {
                 int leftStock = stock - 1;
