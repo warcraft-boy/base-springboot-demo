@@ -34,67 +34,67 @@ public class RedissonConfig {
      * 哨兵模式redisson连接
      * @return
      */
-    @Bean
-    public Redisson sentinelRedisson(){
-        Config config = new Config();
-        SentinelServersConfig sentinelServersConfig = config.useSentinelServers();
-        sentinelServersConfig.addSentinelAddress("redis://127.0.0.1:6379").setDatabase(0)
-                             .addSentinelAddress("redis://127.0.0.1:6380").setDatabase(0)
-                             .addSentinelAddress("redis://127.0.0.1:6381").setDatabase(0);
-        //sentinelServersConfig.setPassword("123456");    //设置密码
-        sentinelServersConfig.setMasterConnectionPoolSize(500);  //设置master节点连接池最大连接数为500
-        sentinelServersConfig.setSlaveConnectionPoolSize(500);  //设置slave节点连接池最大连接数为500
-        return (Redisson) Redisson.create(config);
-    }
+//    @Bean
+//    public Redisson sentinelRedisson(){
+//        Config config = new Config();
+//        SentinelServersConfig sentinelServersConfig = config.useSentinelServers();
+//        sentinelServersConfig.addSentinelAddress("redis://127.0.0.1:6379").setDatabase(0)
+//                             .addSentinelAddress("redis://127.0.0.1:6380").setDatabase(0)
+//                             .addSentinelAddress("redis://127.0.0.1:6381").setDatabase(0);
+//        //sentinelServersConfig.setPassword("123456");    //设置密码
+//        sentinelServersConfig.setMasterConnectionPoolSize(500);  //设置master节点连接池最大连接数为500
+//        sentinelServersConfig.setSlaveConnectionPoolSize(500);  //设置slave节点连接池最大连接数为500
+//        return (Redisson) Redisson.create(config);
+//    }
 
     /**
      * 集群方式redisson连接
      * @return
      */
-    @Bean
-    public Redisson clusterRedisson(){
-        Config config = new Config();
-        ClusterServersConfig clusterServersConfig = config.useClusterServers();
-        clusterServersConfig.addNodeAddress("redis://127.0.0.1:6379")
-                            .addNodeAddress("redis://127.0.0.1:6380")
-                            .addNodeAddress("redis://127.0.0.1:6381");
-        //clusterServersConfig.setPassword("123456");    //设置密码
-        clusterServersConfig.setMasterConnectionPoolSize(500);   //设置master节点连接池最大连接数为500
-        clusterServersConfig.setSlaveConnectionPoolSize(500);  //设置slave节点连接池最大连接数为500
-        return (Redisson) Redisson.create(config);
-    }
+//    @Bean
+//    public Redisson clusterRedisson(){
+//        Config config = new Config();
+//        ClusterServersConfig clusterServersConfig = config.useClusterServers();
+//        clusterServersConfig.addNodeAddress("redis://127.0.0.1:6379")
+//                            .addNodeAddress("redis://127.0.0.1:6380")
+//                            .addNodeAddress("redis://127.0.0.1:6381");
+//        //clusterServersConfig.setPassword("123456");    //设置密码
+//        clusterServersConfig.setMasterConnectionPoolSize(500);   //设置master节点连接池最大连接数为500
+//        clusterServersConfig.setSlaveConnectionPoolSize(500);  //设置slave节点连接池最大连接数为500
+//        return (Redisson) Redisson.create(config);
+//    }
 
     /**
      * 主从模式redisson连接
      * @return
      */
-    @Bean
-    public Redisson masterSlaveRedisson(){
-        Config config = new Config();
-        MasterSlaveServersConfig masterSlaveServersConfig = config.useMasterSlaveServers();
-        masterSlaveServersConfig.setMasterAddress("redis://127.0.0.1:6379")
-                                .addSlaveAddress("redis://127.0.0.1:6380")
-                                .addSlaveAddress("redis://127.0.0.1:6381");
-        //masterSlaveServersConfig.setPassword("123456"); //设置密码
-        masterSlaveServersConfig.setMasterConnectionPoolSize(500);   //设置master节点连接池最大连接数为500
-        masterSlaveServersConfig.setSlaveConnectionPoolSize(500);  //设置slave节点连接池最大连接数为500
-        return (Redisson) Redisson.create(config);
-    }
+//    @Bean
+//    public Redisson masterSlaveRedisson(){
+//        Config config = new Config();
+//        MasterSlaveServersConfig masterSlaveServersConfig = config.useMasterSlaveServers();
+//        masterSlaveServersConfig.setMasterAddress("redis://127.0.0.1:6379")
+//                                .addSlaveAddress("redis://127.0.0.1:6380")
+//                                .addSlaveAddress("redis://127.0.0.1:6381");
+//        //masterSlaveServersConfig.setPassword("123456"); //设置密码
+//        masterSlaveServersConfig.setMasterConnectionPoolSize(500);   //设置master节点连接池最大连接数为500
+//        masterSlaveServersConfig.setSlaveConnectionPoolSize(500);  //设置slave节点连接池最大连接数为500
+//        return (Redisson) Redisson.create(config);
+//    }
 
     /**
      * 云托管redisson连接（这种方式主要解决redis提供商为云服务的提供商的redis连接，比如亚马逊云的AWS ElastiCache和微软云的Azure Redis 缓存）
      * @return
      */
-    @Bean
-    public Redisson replicatedRedisson(){
-        Config config = new Config();
-        ReplicatedServersConfig replicatedServersConfig = config.useReplicatedServers();
-        replicatedServersConfig.addNodeAddress("redis://123.57.221.104.1:6379")
-                               .addNodeAddress("redis://123.57.221.105:6380")
-                               .addNodeAddress("redis://123.57.221.106:6382");
-        //replicatedServersConfig.setPassword("123456"); //设置密码
-        replicatedServersConfig.setMasterConnectionPoolSize(500);   //设置master节点连接池最大连接数为500
-        replicatedServersConfig.setSlaveConnectionPoolSize(500);  //设置slave节点连接池最大连接数为500
-        return (Redisson) Redisson.create(config);
-    }
+//    @Bean
+//    public Redisson replicatedRedisson(){
+//        Config config = new Config();
+//        ReplicatedServersConfig replicatedServersConfig = config.useReplicatedServers();
+//        replicatedServersConfig.addNodeAddress("redis://123.57.221.104.1:6379")
+//                               .addNodeAddress("redis://123.57.221.105:6380")
+//                               .addNodeAddress("redis://123.57.221.106:6382");
+//        //replicatedServersConfig.setPassword("123456"); //设置密码
+//        replicatedServersConfig.setMasterConnectionPoolSize(500);   //设置master节点连接池最大连接数为500
+//        replicatedServersConfig.setSlaveConnectionPoolSize(500);  //设置slave节点连接池最大连接数为500
+//        return (Redisson) Redisson.create(config);
+//    }
 }
