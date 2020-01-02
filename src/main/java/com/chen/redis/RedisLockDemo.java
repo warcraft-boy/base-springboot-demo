@@ -198,22 +198,21 @@ public class RedisLockDemo {
 
     /**
      * 出现问题：redis集群下，主redis节点挂掉，锁未同步到新的主节点上，后面的线程会同时持有该锁，也会出现"超卖"现象
-     * 解决方法：
+     * 解决方法：使用redissond的boolean tryLock(long waitTime, long leaseTime, TimeUnit unit)方法，
+     * 如果获得了锁，则返回true，且leaseTime后或者调用unlock()方法释放锁。否则，在waitTime时间内一直尝试请求去获得锁
+     * watiTime时间应该大于网络超时时间，这样保证主redis挂掉至从redis升级到主的时间段内，此线程一直保持死死的请求状态
      *
      * @return
      */
-    public String demo8() {
+    public String demo8() throws InterruptedException {
         String lockKey = "product_001";
-        String clientId = UUID.randomUUID().toString();
         RLock redissonLock = redisson.getLock(lockKey);
         try {
             //redisson开启锁
-            Boolean result = stringRedisTemplate.opsForValue().setIfAbsent(lockKey, clientId, 30, TimeUnit.SECONDS);
+            Boolean result = redissonLock.tryLock(500,30000,TimeUnit.MICROSECONDS);
             if (!result) {
                 return "error";
             }
-            //在业务代码之前用redisson锁续命此线程
-            redissonLock.lock(30, TimeUnit.SECONDS);
             //业务代码
             int stock = Integer.parseInt(stringRedisTemplate.opsForValue().get("stock"));
             if (stock > 0) {
