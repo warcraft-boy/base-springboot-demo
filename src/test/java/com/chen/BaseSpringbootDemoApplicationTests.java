@@ -10,12 +10,12 @@ import com.chen.mysql.model.Student;
 import com.chen.redis.RedisUtil;
 import com.mongodb.client.result.DeleteResult;
 import com.mongodb.client.result.UpdateResult;
+import org.bson.types.ObjectId;
 import org.junit.jupiter.api.Test;
 import org.junit.runner.RunWith;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
-import org.springframework.data.domain.Example;
-import org.springframework.data.domain.Sort;
+import org.springframework.data.domain.*;
 import org.springframework.data.mongodb.core.MongoTemplate;
 import org.springframework.data.mongodb.core.query.Criteria;
 import org.springframework.data.mongodb.core.query.Query;
@@ -24,6 +24,7 @@ import org.springframework.data.redis.core.RedisTemplate;
 import org.springframework.data.redis.core.StringRedisTemplate;
 import org.springframework.test.context.junit4.SpringRunner;
 
+import java.util.ArrayList;
 import java.util.List;
 import java.util.regex.Pattern;
 
@@ -106,6 +107,9 @@ class BaseSpringbootDemoApplicationTests {
         redisUtil.delete("device");
     }
 
+    /**
+     * 以下MongoRepository和MongoTemplate都可以操作mongodb，建议两者配合使用
+     */
     //=====================================MongoRepository测试==============================
     //插入数据
     @Test
@@ -130,9 +134,58 @@ class BaseSpringbootDemoApplicationTests {
         User u = userRepository.findOne(example).get();
         System.out.println(u);
     }
-
+    //批量插入
     @Test
     public void test11(){
+        List<User> users = new ArrayList<>();
+        for(int i = 0;i < 5;i++){
+            User u = new User();
+            u.setName("chen" + i);
+            u.setAge(18);
+            users.add(u);
+        }
+        userRepository.saveAll(users);
+    }
+    //查询数据总条数
+    @Test
+    public void test12(){
+        long count = userRepository.count();
+        System.out.println(count);
+    }
+    //按条件查看数据是否存在
+    @Test
+    public void test13(){
+        User user = new User();
+        user.setAge(18);
+        Example<User> example = Example.of(user);
+        boolean exist = userRepository.exists(example);
+        System.out.println(exist);
+    }
+    //按照主键查看数据是否存在
+    @Test
+    public void test14(){
+        ObjectId id = new ObjectId("5df89aa9cc5f11430d46e786");
+        boolean exist = userRepository.existsById(id);
+        System.out.println(exist);
+    }
+    //排序查询，按照年龄排序
+    @Test
+    public void test15(){
+        Sort sort = Sort.by(Sort.Direction.DESC, "age");
+        List<User> users = userRepository.findAll(sort);
+        System.out.println(users);
+    }
+    //分页查询
+    @Test
+    public void test16(){
+        int pageNo = 1;
+        int pageSize = 2;
+        Pageable pageable = PageRequest.of(pageNo, pageSize);
+        Page<User> userPage = userRepository.findAll(pageable);
+        long count = userPage.getTotalElements(); //数据总条数
+        List<User> users = userPage.getContent(); //当前页的数据
+        System.out.println(count);
+        System.out.println(users);
     }
 
     //====================================MongoTemplate测试==============================
