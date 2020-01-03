@@ -68,4 +68,12 @@ public class TestDemo {
         System.out.println(redisUtil.get("soil"));
     }
 
+    @Test
+    public void test06(){
+        Date date = new Date();
+        System.out.println(date);
+        date.setTime(date.getTime() + 6000);
+        System.out.println(date);
+    }
+
 }
