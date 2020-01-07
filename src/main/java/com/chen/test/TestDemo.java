@@ -78,6 +78,7 @@ public class TestDemo {
 
     public void test07(){
         System.out.println("git stash测试");
+        System.out.println("test1 分支");
     }
 
 }
