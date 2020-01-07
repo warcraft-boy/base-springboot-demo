@@ -76,4 +76,8 @@ public class TestDemo {
         System.out.println(date);
     }
 
+    public void test07(){
+        System.out.println("git stash测试");
+    }
+
 }
