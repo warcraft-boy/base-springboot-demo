@@ -75,10 +75,4 @@ public class TestDemo {
         date.setTime(date.getTime() + 6000);
         System.out.println(date);
     }
-
-    public void test07(){
-        System.out.println("git stash测试");
-        System.out.println("test1 分支");
-    }
-
 }
