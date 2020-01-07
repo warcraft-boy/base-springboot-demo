@@ -75,8 +75,4 @@ public class TestDemo {
         date.setTime(date.getTime() + 6000);
         System.out.println(date);
     }
-
-    public void test22(){
-        System.out.println("test2");
-    }
 }
