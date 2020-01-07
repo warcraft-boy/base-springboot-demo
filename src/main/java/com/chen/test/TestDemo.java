@@ -76,4 +76,7 @@ public class TestDemo {
         System.out.println(date);
     }
 
+    public void test22(){
+        System.out.println("test2");
+    }
 }
