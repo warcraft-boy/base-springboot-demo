@@ -13,22 +13,22 @@ import redis.clients.jedis.JedisPool;
 @Component
 public class RedisUtil {
 
-    @Autowired
-    private JedisPool jedisPool;
+//    @Autowired
+//    private JedisPool jedisPool;
 
     //String类型操作
-    public void set(String key, String value){
-        Jedis jedis = jedisPool.getResource();
-        jedis.set(key, value);
-    }
-
-    public String get(String key){
-        Jedis jedis = jedisPool.getResource();
-        return jedis.get(key);
-    }
-
-    public void delete(String key){
-        Jedis jedis = jedisPool.getResource();
-        jedis.del(key);
-    }
+//    public void set(String key, String value){
+//        Jedis jedis = jedisPool.getResource();
+//        jedis.set(key, value);
+//    }
+//
+//    public String get(String key){
+//        Jedis jedis = jedisPool.getResource();
+//        return jedis.get(key);
+//    }
+//
+//    public void delete(String key){
+//        Jedis jedis = jedisPool.getResource();
+//        jedis.del(key);
+//    }
 }

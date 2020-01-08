@@ -64,8 +64,8 @@ public class TestDemo {
 
     @Test
     public void test05(){
-        redisUtil.set("soil", "cloud");
-        System.out.println(redisUtil.get("soil"));
+//        redisUtil.set("soil", "cloud");
+//        System.out.println(redisUtil.get("soil"));
     }
 
     @Test

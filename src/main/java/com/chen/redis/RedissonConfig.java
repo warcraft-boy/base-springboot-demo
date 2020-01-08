@@ -13,7 +13,7 @@ import java.util.Set;
  * @Author chenjianwen
  * @Date 2019-12-25
  **/
-@Configuration
+//@Configuration
 public class RedissonConfig {
 
     /**

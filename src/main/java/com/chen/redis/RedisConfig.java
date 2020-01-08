@@ -13,8 +13,8 @@ import redis.clients.jedis.JedisPoolConfig;
  * @Date: Created in 2019/12/13 <br>
  * @Author: chenjianwen
  */
-@Configuration
-@PropertySource("classpath:redis.properties")
+//@Configuration
+//@PropertySource("classpath:redis.properties")
 @Slf4j
 public class RedisConfig {
 

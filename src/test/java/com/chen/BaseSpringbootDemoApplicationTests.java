@@ -1,6 +1,7 @@
 package com.chen;
 
 import com.baomidou.mybatisplus.core.toolkit.Wrappers;
+import com.chen.config.CustomConfig;
 import com.chen.mongodb.model.Department;
 import com.chen.mongodb.model.User;
 import com.chen.mongodb.repository.UserRepository;
@@ -46,7 +47,8 @@ class BaseSpringbootDemoApplicationTests {
     private UserRepository userRepository;
     @Autowired
     private MongoTemplate mongoTemplate;
-
+    @Autowired
+    private CustomConfig customConfig;
 
     //=========================mybatisplus测试==============================
     /**
@@ -104,7 +106,7 @@ class BaseSpringbootDemoApplicationTests {
     public void test07(){
 //        redisUtil.set("device", "computer");
 //        System.out.println(redisUtil.get("device"));
-        redisUtil.delete("device");
+        //redisUtil.delete("device");
     }
 
     /**
@@ -276,5 +278,25 @@ class BaseSpringbootDemoApplicationTests {
         query.addCriteria(criteria);
         DeleteResult dr = mongoTemplate.remove(query, Department.class);
         System.out.println(dr.getDeletedCount());
+    }
+
+    //==========================yml自定义属性读取值==============================
+    @Test
+    public void test31(){
+        //设置单个值
+        System.out.println(customConfig.getValue());
+        //对象
+        System.out.println(customConfig.getPerson());
+        //数组
+        int[] arr = customConfig.getArr();
+        for(int i : arr){
+            System.out.println(i);
+        }
+        //集合
+        System.out.println(customConfig.getList());
+        //map
+        System.out.println(customConfig.getMap().toString());
+        //包含集合的map
+        System.out.println(customConfig.getListMap());
     }
 }
