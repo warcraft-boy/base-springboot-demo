@@ -277,4 +277,5 @@ class BaseSpringbootDemoApplicationTests {
         DeleteResult dr = mongoTemplate.remove(query, Department.class);
         System.out.println(dr.getDeletedCount());
     }
+
 }
