@@ -75,4 +75,7 @@ public class TestDemo {
         date.setTime(date.getTime() + 6000);
         System.out.println(date);
     }
+
+    @Test
+    public void test07(){}
 }
