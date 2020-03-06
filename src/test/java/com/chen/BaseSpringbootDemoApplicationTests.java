@@ -14,6 +14,8 @@ import com.mongodb.client.result.UpdateResult;
 import org.bson.types.ObjectId;
 import org.junit.jupiter.api.Test;
 import org.junit.runner.RunWith;
+import org.redisson.misc.Hash;
+import org.springframework.amqp.rabbit.core.RabbitTemplate;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.data.domain.*;
@@ -25,8 +27,7 @@ import org.springframework.data.redis.core.RedisTemplate;
 import org.springframework.data.redis.core.StringRedisTemplate;
 import org.springframework.test.context.junit4.SpringRunner;
 
-import java.util.ArrayList;
-import java.util.List;
+import java.util.*;
 import java.util.regex.Pattern;
 
 @SpringBootTest
@@ -49,6 +50,9 @@ class BaseSpringbootDemoApplicationTests {
     private MongoTemplate mongoTemplate;
     @Autowired
     private CustomConfig customConfig;
+    @Autowired
+    private RabbitTemplate rabbitTemplate;
+
 
     //=========================mybatisplus测试==============================
     /**
@@ -298,5 +302,26 @@ class BaseSpringbootDemoApplicationTests {
         System.out.println(customConfig.getMap().toString());
         //包含集合的map
         System.out.println(customConfig.getListMap());
+    }
+
+    //===============================rabbitmq=================================
+
+    /**
+     * direct 点对点模式
+     */
+    //发送消息
+    @Test
+    public void test32(){
+        Map<String,Object> map = new HashMap<>();
+        map.put("key", "this is the fist message");
+        map.put("data", Arrays.asList("hello", 3, true));
+        rabbitTemplate.convertAndSend("exchange.direct", "atguigu", map); //第一个参数表示交换机，第二个表示交换机中定义的队列的key值，第三个是发的消息
+    }
+    //接受消息
+    @Test
+    public void test33(){
+        Object obj = rabbitTemplate.receiveAndConvert("atguigu");
+        System.out.println(obj.getClass());
+        System.out.println(obj);
     }
 }

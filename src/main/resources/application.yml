@@ -26,9 +26,9 @@ spring:
   #mq
   rabbitmq:
     host: localhost
-    port: 8080
-    username: root
-    password: 123456
+    port: 5672
+    username: guest
+    password: guest
 
   #mongodb
   mongodb:

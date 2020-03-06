@@ -6,6 +6,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import redis.clients.jedis.Jedis;
 import redis.clients.jedis.params.SetParams;
 
+import java.text.DateFormat;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.Date;
@@ -77,5 +78,21 @@ public class TestDemo {
     }
 
     @Test
-    public void test07(){}
+    public void test07(){
+        String strdate = "2020-12-23";
+        SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd");
+        try {
+            Date date = sdf.parse(strdate);
+        } catch (ParseException e) {
+            System.out.println("日期格式不正确");
+        }
+
+    }
+
+    @Test
+    public void test08(){
+        String regex = "123456";
+        System.out.println(regex.matches("123456"));
+    }
+
 }

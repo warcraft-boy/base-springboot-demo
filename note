@@ -22,3 +22,22 @@ INSERT INTO `student` VALUES (1, '张三', 1, '一班');
 INSERT INTO `student` VALUES (2, '李四', 1, '一班');
 INSERT INTO `student` VALUES (3, '王五', 2, '二班');
 INSERT INTO `student` VALUES (4, '赵六', 3, '三班');
+
+
+
+==============================rabbitmq=============================
+定义交换机为以下三种
+exchange.direct             点对点模式（队列精确匹配交换机的Routing key）
+exchange.fanout             订阅模式（交换机发布一次，所有队列均可订阅到）
+exchange.topic              主题模式（队列按某种方式模糊匹配交换机的Routing key，例如atguigu.#表示可匹配前缀atguigu后缀为任意的队列，*.news表示可匹配前缀为任意后缀为news的任意队列）
+定义队列为一下四种
+atguigu
+atguigu.news
+atguigu.emps
+gulixueyuan.news
+
+
+RabbitAutoConfiguration                     rabbitmq自动配置类
+RabbitProperties                            封装了rabbitmq的配置
+RabbitTemplate                              给rabbitmq发送和接受消息，顶级接口是 AmqpTemplate
+AmqpAdmin                                   rabbitmq系统管理功能组件
