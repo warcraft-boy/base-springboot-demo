@@ -37,6 +37,7 @@ atguigu.emps
 gulixueyuan.news
 
 
+//rabbitmq配置类
 RabbitAutoConfiguration                     rabbitmq自动配置类
 RabbitProperties                            封装了rabbitmq的配置
 RabbitTemplate                              给rabbitmq发送和接受消息，顶级接口是 AmqpTemplate
