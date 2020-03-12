@@ -1,5 +1,7 @@
 package com.chen.test;
 
+import com.baomidou.mybatisplus.core.toolkit.StringUtils;
+import com.chen.rabbitmq.Book;
 import com.chen.redis.RedisUtil;
 import org.junit.Test;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -95,4 +97,18 @@ public class TestDemo {
         System.out.println(regex.matches("123456"));
     }
 
+    @Test
+    public void test09(){
+        Book book = new Book();
+        if(!StringUtils.isEmpty(book.getName())){
+            System.out.println(book);
+        }else{
+            System.out.println(3);
+        }
+    }
+
+    @Test
+    public void test10(){
+
+    }
 }

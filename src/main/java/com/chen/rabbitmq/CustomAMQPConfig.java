@@ -1,9 +1,13 @@
 package com.chen.rabbitmq;
 
+import lombok.Data;
+import org.springframework.amqp.core.*;
 import org.springframework.amqp.support.converter.Jackson2JsonMessageConverter;
 import org.springframework.amqp.support.converter.MessageConverter;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.stereotype.Component;
 
 /**
  * @Description: <br>自定义rabbitmq配置类
@@ -11,7 +15,13 @@ import org.springframework.context.annotation.Configuration;
  * @Author: chenjianwen
  */
 @Configuration
+@Component
+@Data
 public class CustomAMQPConfig {
+
+    private String queue = "admin.log.queue";
+    private String exchange = "admin.log.exchange.direct";
+    private String routingKey = "admin.operate.log";
 
     /**
      * 自定义MessageConverter
@@ -22,5 +32,30 @@ public class CustomAMQPConfig {
     @Bean
     public MessageConverter messageConverter(){
         return new Jackson2JsonMessageConverter();
+    }
+
+
+    /**
+     * 创建队列，交换机，并绑定
+     */
+    @Autowired
+    private AmqpAdmin amqpAdmin;
+    @Bean
+    public Queue queue(){
+        Queue queue = new Queue(this.queue);
+        amqpAdmin.declareQueue(queue);
+        return queue;
+    }
+    @Bean
+    public DirectExchange directExchange(){
+        DirectExchange directExchange = new DirectExchange(this.exchange);
+        amqpAdmin.declareExchange(directExchange);
+        return directExchange;
+    }
+    @Bean
+    public Binding binding(){
+        Binding binding = BindingBuilder.bind(queue()).to(directExchange()).with(this.routingKey);
+        amqpAdmin.declareBinding(binding);
+        return binding;
     }
 }
