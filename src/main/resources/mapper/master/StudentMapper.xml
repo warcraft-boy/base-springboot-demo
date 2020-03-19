@@ -1,8 +1,8 @@
 <?xml version="1.0" encoding="UTF-8" ?>
 <!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
-<mapper namespace="com.chen.mysql.dao.StudentMapper" >
+<mapper namespace="com.chen.mysql.master.dao.StudentMapper" >
 
-  <resultMap id="BaseResultMap" type="com.chen.mysql.model.Student" >
+  <resultMap id="BaseResultMap" type="com.chen.mysql.master.model.Student" >
     <id column="id" property="id" jdbcType="INTEGER" />
     <result column="name" property="name" jdbcType="VARCHAR" />
     <result column="class_id" property="classId" jdbcType="INTEGER" />
@@ -25,14 +25,14 @@
     where id = #{id,jdbcType=INTEGER}
   </delete>
 
-  <insert id="insert" parameterType="com.chen.mysql.model.Student" >
+  <insert id="insert" parameterType="com.chen.mysql.master.model.Student" >
     insert into student (id, name, class_id, 
       class_name)
     values (#{id,jdbcType=INTEGER}, #{name,jdbcType=VARCHAR}, #{classId,jdbcType=INTEGER}, 
       #{className,jdbcType=VARCHAR})
   </insert>
 
-  <insert id="insertSelective" parameterType="com.chen.mysql.model.Student" >
+  <insert id="insertSelective" parameterType="com.chen.mysql.master.model.Student" >
     insert into student
     <trim prefix="(" suffix=")" suffixOverrides="," >
       <if test="id != null" >
@@ -64,7 +64,7 @@
     </trim>
   </insert>
 
-  <update id="updateByPrimaryKeySelective" parameterType="com.chen.mysql.model.Student" >
+  <update id="updateByPrimaryKeySelective" parameterType="com.chen.mysql.master.model.Student" >
     update student
     <set >
       <if test="name != null" >
@@ -80,7 +80,7 @@
     where id = #{id,jdbcType=INTEGER}
   </update>
 
-  <update id="updateByPrimaryKey" parameterType="com.chen.mysql.model.Student" >
+  <update id="updateByPrimaryKey" parameterType="com.chen.mysql.master.model.Student" >
     update student
     set name = #{name,jdbcType=VARCHAR},
       class_id = #{classId,jdbcType=INTEGER},

@@ -1,4 +1,4 @@
-package com.chen.mysql.model;
+package com.chen.mysql.master.model;
 
 import lombok.Data;
 

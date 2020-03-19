@@ -1,9 +1,9 @@
-package com.chen.mysql.service.impl;
+package com.chen.mysql.master.service.impl;
 
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
-import com.chen.mysql.dao.ClassMapper;
-import com.chen.mysql.model.Class;
-import com.chen.mysql.service.ClassService;
+import com.chen.mysql.master.dao.ClassMapper;
+import com.chen.mysql.master.model.Class;
+import com.chen.mysql.master.service.ClassService;
 import org.springframework.stereotype.Service;
 
 /**

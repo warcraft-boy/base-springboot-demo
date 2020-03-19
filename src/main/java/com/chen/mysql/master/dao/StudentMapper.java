@@ -1,7 +1,7 @@
-package com.chen.mysql.dao;
+package com.chen.mysql.master.dao;
 
 import com.baomidou.mybatisplus.core.mapper.BaseMapper;
-import com.chen.mysql.model.Student;
+import com.chen.mysql.master.model.Student;
 import org.springframework.stereotype.Repository;
 
 @Repository

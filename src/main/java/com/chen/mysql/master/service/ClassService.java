@@ -1,7 +1,7 @@
-package com.chen.mysql.service;
+package com.chen.mysql.master.service;
 
 import com.baomidou.mybatisplus.extension.service.IService;
-import com.chen.mysql.model.Class;
+import com.chen.mysql.master.model.Class;
 
 /**
  * @Description: <br>
