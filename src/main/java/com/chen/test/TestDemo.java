@@ -5,6 +5,7 @@ import com.chen.rabbitmq.Book;
 import com.chen.redis.RedisUtil;
 import org.junit.Test;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.mongodb.core.mapping.TextScore;
 import redis.clients.jedis.Jedis;
 import redis.clients.jedis.params.SetParams;
 
@@ -107,8 +108,19 @@ public class TestDemo {
         }
     }
 
+    /**
+     * 正则替换，将指定内容替换到字符串的正则表达式中
+     */
     @Test
     public void test10(){
-
+        String text = "dear {...} user,your account {...} has been selected,your balance left {...},congratulations!";
+        String[] replaceWord = {"13023459039", "Jevin", "123.33"};
+        String regex = "\\{...}";
+        for(String s : replaceWord){
+            text = text.replaceFirst(regex, s);
+        }
+        System.out.println(text);
     }
+
+
 }

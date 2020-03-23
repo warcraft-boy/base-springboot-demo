@@ -37,9 +37,7 @@ spring:
     database: test
 
 mybatis:
-  mapper-location: classpath:mapper/*.xml
-
-
+  mapper-location: classpath*:mapper/**/*.xml
 
 
 
