@@ -12,6 +12,9 @@ import redis.clients.jedis.params.SetParams;
 import java.text.DateFormat;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
+import java.time.LocalDateTime;
+import java.time.ZoneId;
+import java.time.format.DateTimeFormatter;
 import java.util.Date;
 
 /**
@@ -122,5 +125,15 @@ public class TestDemo {
         System.out.println(text);
     }
 
-
+    /**
+     * 使用DateTimeFormatter获取时间
+     */
+    @Test
+    public void test11(){
+        DateTimeFormatter dtf = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss");
+        LocalDateTime ldt = LocalDateTime.now(ZoneId.of("GMT+8")); //GMT+8指的是北京时间
+        System.out.println(ldt);
+        String time = dtf.format(ldt);
+        System.out.println(time);
+    }
 }
