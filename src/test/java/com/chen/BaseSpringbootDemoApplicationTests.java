@@ -5,9 +5,10 @@ import com.chen.config.CustomConfig;
 import com.chen.mongodb.model.Department;
 import com.chen.mongodb.model.User;
 import com.chen.mongodb.repository.UserRepository;
-import com.chen.mysql.master.dao.ClassMapper;
 import com.chen.mysql.master.dao.StudentMapper;
 import com.chen.mysql.master.model.Student;
+import com.chen.mysql.slave1.dao.ActorMapper;
+import com.chen.mysql.slave1.model.Actor;
 import com.chen.rabbitmq.Book;
 import com.chen.redis.RedisUtil;
 import com.mongodb.client.result.DeleteResult;
@@ -41,8 +42,6 @@ class BaseSpringbootDemoApplicationTests {
     @Autowired
     private StudentMapper studentMapper;
     @Autowired
-    private ClassMapper classMapper;
-    @Autowired
     private RedisTemplate redisTemplate;
     @Autowired
     private RedisUtil redisUtil;
@@ -58,6 +57,8 @@ class BaseSpringbootDemoApplicationTests {
     private RabbitTemplate rabbitTemplate;
     @Autowired
     private AmqpAdmin amqpAdmin;
+    @Autowired
+    private ActorMapper actorMapper;
 
 
     //=========================mybatisplus测试==============================
@@ -410,5 +411,22 @@ class BaseSpringbootDemoApplicationTests {
     @Test
     public void test42(){
         amqpAdmin.declareBinding(new Binding("amqpadmin.queue", Binding.DestinationType.QUEUE, "amqpadmin.exchange.direct", "amqpadmin.queue", null));
+    }
+
+
+    //===============================多数据源测试=================================
+    @Test
+    public void test43(){
+        Actor actor = new Actor();
+        actor.setFirstName("Chen");
+        actor.setLastName("Jevin");
+        actor.setLastUpdate(new Date());
+        actorMapper.insert(actor);
+
+        Student s = new Student();
+        s.setClassId(1);
+        s.setName("Chen");
+        s.setClassName("501");
+        studentMapper.insert(s);
     }
 }

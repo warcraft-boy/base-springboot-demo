@@ -1,9 +1,9 @@
 package com.chen.mysql.master.service.impl;
 
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
-import com.chen.mysql.master.dao.ClassMapper;
-import com.chen.mysql.master.model.Class;
-import com.chen.mysql.master.service.ClassService;
+import com.chen.mysql.master.dao.StudentMapper;
+import com.chen.mysql.master.model.Student;
+import com.chen.mysql.master.service.StudentService;
 import org.springframework.stereotype.Service;
 
 /**
@@ -12,5 +12,5 @@ import org.springframework.stereotype.Service;
  * @Author: chenjianwen
  */
 @Service
-public class ClassServiceImpl extends ServiceImpl<ClassMapper, Class> implements ClassService {
+public class StudentServiceImpl extends ServiceImpl<StudentMapper, Student> implements StudentService {
 }
