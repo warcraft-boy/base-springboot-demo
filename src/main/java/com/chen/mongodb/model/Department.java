@@ -14,7 +14,7 @@ import java.io.Serializable;
  * @Author: chenjianwen
  */
 @Data
-@Document("department")
+@Document(collection = "department")
 public class Department implements Serializable {
 
     @Id

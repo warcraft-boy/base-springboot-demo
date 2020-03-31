@@ -1,8 +1,13 @@
 package com.chen.rabbitmq;
 
+import com.fasterxml.jackson.databind.ObjectMapper;
 import org.springframework.amqp.core.Message;
 import org.springframework.amqp.rabbit.annotation.RabbitListener;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import org.springframework.messaging.handler.annotation.Payload;
+
+import java.io.IOException;
 
 /**
  * @Description: <br>监听消息队列的消息
@@ -11,6 +16,9 @@ import org.springframework.stereotype.Service;
  */
 @Service
 public class BookSevice {
+
+    @Autowired
+    private ObjectMapper objectMapper;
 
     @RabbitListener(queues = "atguigu.news") //监听队列"atguigu.news"里面的消息
     public void receive(Book book){
@@ -26,5 +34,16 @@ public class BookSevice {
     public void receive2(Message message){
         System.out.println(message.getBody()); //消息体
         System.out.println(message.getMessageProperties()); //消息头信息
+    }
+
+    /**
+     * 从对象的字节数组中读取对象
+     * @param message
+     * @throws IOException
+     */
+    @RabbitListener(queues = "atguigu.news") //监听队列"atguigu.news"里面的消息
+    public void receive3(@Payload byte[] message) throws IOException {
+        Book book = objectMapper.readValue(message, Book.class);
+        System.out.println("收到消息：" + book);
     }
 }

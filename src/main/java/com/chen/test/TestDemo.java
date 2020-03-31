@@ -136,4 +136,22 @@ public class TestDemo {
         String time = dtf.format(ldt);
         System.out.println(time);
     }
+
+    @Test
+    public void test12(){
+        String text = "dear {...} user,your account {...} has been selected,your balance left {...},congratulations!";
+        int val = 0;
+        int count = 0;
+        while(true){
+            val = text.indexOf("{...}", val);
+            if(val == -1){
+                break;
+            }else{
+                count++;
+                val++;
+            }
+
+        }
+        System.out.println(count);
+    }
 }

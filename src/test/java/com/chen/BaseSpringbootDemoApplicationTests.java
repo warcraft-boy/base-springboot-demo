@@ -11,6 +11,7 @@ import com.chen.mysql.slave1.dao.ActorMapper;
 import com.chen.mysql.slave1.model.Actor;
 import com.chen.rabbitmq.Book;
 import com.chen.redis.RedisUtil;
+import com.fasterxml.jackson.core.JsonProcessingException;
 import com.mongodb.client.result.DeleteResult;
 import com.mongodb.client.result.UpdateResult;
 import org.bson.types.ObjectId;
@@ -31,6 +32,7 @@ import org.springframework.data.mongodb.core.query.Update;
 import org.springframework.data.redis.core.RedisTemplate;
 import org.springframework.data.redis.core.StringRedisTemplate;
 import org.springframework.test.context.junit4.SpringRunner;
+import com.fasterxml.jackson.databind.ObjectMapper;
 
 import java.util.*;
 import java.util.regex.Pattern;
@@ -59,6 +61,8 @@ class BaseSpringbootDemoApplicationTests {
     private AmqpAdmin amqpAdmin;
     @Autowired
     private ActorMapper actorMapper;
+    @Autowired
+    private ObjectMapper objectMapper;
 
 
     //=========================mybatisplus测试==============================
@@ -364,12 +368,15 @@ class BaseSpringbootDemoApplicationTests {
      */
     //发送消息
     @Test
-    public void test36(){
+    public void test36() throws JsonProcessingException {
         Book book = new Book();
         book.setName("西游记");
         book.setAuthor("吴承恩");
         //routKey路由键为"*.news"，*表示通配符，表示发送给所有已".news"结尾的队列
         rabbitTemplate.convertAndSend("exchange.topic", "*.news", book);
+        //2.将对象序列化成字节数组传输
+        byte[] data = objectMapper.writeValueAsBytes(book);
+        rabbitTemplate.convertAndSend("exchange.topic", "*.news", data);
     }
     //接收消息
     @Test
