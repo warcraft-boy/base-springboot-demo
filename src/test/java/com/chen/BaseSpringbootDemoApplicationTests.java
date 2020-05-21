@@ -76,11 +76,11 @@ public class BaseSpringbootDemoApplicationTests {
     @Autowired
     private EmailServiceTemplate emailServiceTemplate;
     @Autowired
-    private EmailCaptchaTemplate emailCaptchaTemplate;
+    private EmailServiceCaptchaTemplate emailCaptchaTemplate;
     @Autowired
     private SmsServiceTemplate smsServiceTemplate;
     @Autowired
-    private SmsCaptchaTemplate smsCaptchaTemplate;
+    private SmsServiceCaptchaTemplate smsCaptchaTemplate;
 
 
     //=========================mybatisplus测试==============================
