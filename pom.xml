@@ -58,7 +58,7 @@
         <dependency>
             <groupId>junit</groupId>
             <artifactId>junit</artifactId>
-            <version>4.11</version>
+            <version>4.13</version>
         </dependency>
 
         <!-- 第一部分：Spring 配置-->
@@ -164,7 +164,61 @@
             <version>1.1.21</version>
         </dependency>
 
+        <dependency>
+            <groupId>com.alibaba</groupId>
+            <artifactId>fastjson</artifactId>
+            <version>1.2.47</version>
+        </dependency>
+
+        <!-- message center api -->
+
+        <dependency>
+            <groupId>cn.coralglobal.service</groupId>
+            <artifactId>message-center-api</artifactId>
+            <version>2.4.1</version>
+        </dependency>
+
+<!--        <dependency>-->
+<!--            <groupId>cn.coralglobal.service</groupId>-->
+<!--            <artifactId>service-sms-api</artifactId>-->
+<!--            <version>19.3.1</version>-->
+<!--        </dependency>-->
+
     </dependencies>
+
+<!--    <repositories>-->
+<!--        <repository>-->
+<!--            <id>coralglobal-nexus</id>-->
+<!--            <url>http://nexus1.coralglobal.cn/repository/maven-public/</url>-->
+<!--        </repository>-->
+<!--    </repositories>-->
+
+    <!-- 备份 -->
+<!--    <repositories>-->
+<!--        <repository>-->
+<!--            <id>maven-public</id>-->
+<!--            <name>maven-public</name>-->
+<!--            <url>http://nexus1.coralglobal.cn/repository/maven-public/</url>-->
+<!--            <releases>-->
+<!--                <enabled>true</enabled>-->
+<!--            </releases>-->
+<!--            <snapshots>-->
+<!--                <enabled>true</enabled>-->
+<!--            </snapshots>-->
+<!--        </repository>-->
+<!--        <repository>-->
+<!--            <id>coralglobal-nexus</id>-->
+<!--            <url>http://nexus1.coralglobal.cn/repository/maven-public/</url>-->
+<!--        </repository>-->
+<!--    </repositories>-->
+
+<!--    <pluginRepositories>-->
+<!--        <pluginRepository>-->
+<!--            <id>maven-public</id>-->
+<!--            <name>maven-public</name>-->
+<!--            <url>http://nexus1.coralglobal.cn/repository/maven-public/</url>-->
+<!--        </pluginRepository>-->
+<!--    </pluginRepositories>-->
 
     <build>
         <plugins>

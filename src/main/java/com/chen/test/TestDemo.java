@@ -1,21 +1,27 @@
 package com.chen.test;
 
+import com.alibaba.fastjson.JSON;
 import com.baomidou.mybatisplus.core.toolkit.StringUtils;
 import com.chen.rabbitmq.Book;
 import com.chen.redis.RedisUtil;
 import org.junit.Test;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.context.annotation.AnnotationConfigApplicationContext;
 import org.springframework.data.mongodb.core.mapping.TextScore;
 import redis.clients.jedis.Jedis;
 import redis.clients.jedis.params.SetParams;
+import sun.security.x509.NameConstraintsExtension;
 
+import java.lang.reflect.Field;
+import java.lang.reflect.InvocationTargetException;
+import java.lang.reflect.Method;
 import java.text.DateFormat;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.time.LocalDateTime;
 import java.time.ZoneId;
 import java.time.format.DateTimeFormatter;
-import java.util.Date;
+import java.util.*;
 
 /**
  * @Description: <br>
@@ -30,7 +36,7 @@ public class TestDemo {
     @Test
     public void test01() throws ParseException {
         SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
-        String strDate = "2019-10-26 15:40:30";
+        String strDate = "2020-03-26 15:40:30";
         Date date = sdf.parse(strDate);
         System.out.println(date.getTime());
         System.out.println(date);
@@ -153,5 +159,145 @@ public class TestDemo {
 
         }
         System.out.println(count);
+    }
+
+    @Test
+    public void test13(){
+        String content = "您的验证码为：{}，请尽快完成操作。";
+        content = content.replace("{}", "123");
+        System.out.println(content);
+    }
+
+    @Test
+    public void test14(){
+        List<String> list= new ArrayList<>();
+        list.add("a");
+        list.add("b");
+        list.add("c");
+        list.add("d");
+        list.add("e");
+        //Iterator iterator = list.iterator();
+
+        ListIterator<String> iterator = list.listIterator();
+        List<String> list2 = new ArrayList<>();
+        list2.addAll(list);
+        go:while(iterator.hasNext()){
+            String value = iterator.next();
+            if("c".equals(value)){
+                iterator.remove();
+                iterator.add("cc");
+                break go;
+            }
+        }
+        System.out.println(list);
+    }
+
+    @Test
+    public void test15(){
+        List<String> list= new ArrayList<>();
+        list.add("a");
+        list.add("b");
+        list.add("c");
+        list.add("d");
+        list.add("e");
+        for(String s : list){
+            if("c".equals(s)){
+                list.remove(s);
+
+            }
+        }
+    }
+
+    @Test
+    public void test16(){
+        Map<String,Object> map=new HashMap<>();
+        map.put("name","zhangsan");
+        map.put("age",14);
+        String jsonStr= JSON.toJSONString(map);
+        System.out.println(jsonStr);
+    }
+
+    @Test
+    public void test17(){
+        String str = "玖仟肆佰零肆元玖角叁分  ￥9,404.93元";
+        int moneyPreIndex = str.indexOf("¥");
+        int moneySuffIndex = str.indexOf("元");
+        String solvedMoney = str.substring(moneyPreIndex + 1, moneySuffIndex);
+        System.out.println(solvedMoney);
+        System.out.println(str);
+    }
+
+    @Test
+    public void test18(){
+        String str = "玖仟肆佰零肆元玖角叁分  ￥404.93元";
+        int value = str.indexOf(" ");
+        String s = str.substring(value + 3, str.length() - 1);
+        String ss = s.replaceAll(",", "");
+        System.out.println(ss);
+    }
+
+    @Test
+    public void test19(){
+        String idNo = "342923199303193116";
+        String yearStr = idNo.substring(6, 10);
+        SimpleDateFormat sdf = new SimpleDateFormat("yyyy");
+        String currentStr = sdf.format(new Date());
+        System.out.println(yearStr + "====" + currentStr);
+        Integer year = Integer.valueOf(yearStr);
+        Integer current = Integer.valueOf(currentStr);
+        Integer value = current - year;
+        System.out.println(value);
+    }
+
+    @Test
+    public void test20() throws Exception {
+        UserController userController = new UserController();
+        UserService userService = new UserService();
+        Class<? extends UserController> clazz = userController.getClass();
+//        Field[] fields = clazz.getDeclaredFields();
+//        Arrays.asList(fields).stream().forEach(System.out::println);
+
+        Field userServiceField = clazz.getDeclaredField("userService");
+        userServiceField.setAccessible(true);
+
+        String name = userServiceField.getName();
+        System.out.println(name);
+
+        name = name.substring(0, 1).toUpperCase() + name.substring(1, name.length());
+        System.out.println(name);
+
+        String setMethodName = "set" + name;
+        System.out.println(setMethodName);
+
+
+        Method method = clazz.getMethod(setMethodName, UserService.class);
+        method.invoke(userController, userService);
+
+        userServiceField.set(userController, userService);
+        System.out.println(userController.getUserService());
+    }
+
+    @Test
+    public void test21() throws IllegalAccessException, InstantiationException, NoSuchMethodException, InvocationTargetException {
+        Class clazz = UserController.class;
+        UserController userController = (UserController) clazz.newInstance();
+
+        Method method = clazz.getMethod("bbq", String.class);
+        method.invoke(userController, new String());
+    }
+
+    @Test
+    public void test22(){
+        UserController userController = new UserController();
+        UserService userService = new UserService();
+        //userController.setUserService(userService);
+        System.out.println(userController.getUserService());
+    }
+
+    @Test
+    public void test(){
+        AnnotationConfigApplicationContext ac = new AnnotationConfigApplicationContext(FishConfig.class);
+        Fish fish = ac.getBean("fish", Fish.class);
+        fish.swim("黄鱼");
     }
 }

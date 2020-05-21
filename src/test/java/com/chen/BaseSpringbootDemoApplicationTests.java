@@ -1,5 +1,9 @@
 package com.chen;
 
+import cn.coralglobal.message.api.enums.SmsTypeEnum;
+import cn.coralglobal.message.api.exception.MessageCenterBuilderException;
+import cn.coralglobal.message.api.exception.MessageCenterSendException;
+import cn.coralglobal.message.api.service.*;
 import com.baomidou.mybatisplus.core.toolkit.Wrappers;
 import com.chen.config.CustomConfig;
 import com.chen.mongodb.model.Department;
@@ -14,8 +18,9 @@ import com.chen.redis.RedisUtil;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.mongodb.client.result.DeleteResult;
 import com.mongodb.client.result.UpdateResult;
+import net.bytebuddy.asm.Advice;
 import org.bson.types.ObjectId;
-import org.junit.jupiter.api.Test;
+import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.springframework.amqp.core.AmqpAdmin;
 import org.springframework.amqp.core.Binding;
@@ -35,11 +40,12 @@ import org.springframework.test.context.junit4.SpringRunner;
 import com.fasterxml.jackson.databind.ObjectMapper;
 
 import java.util.*;
+import java.util.concurrent.TimeUnit;
 import java.util.regex.Pattern;
 
-@SpringBootTest
+@SpringBootTest(classes = BaseSpringbootDemoApplication.class)
 @RunWith(SpringRunner.class)
-class BaseSpringbootDemoApplicationTests {
+public class BaseSpringbootDemoApplicationTests {
 
     @Autowired
     private StudentMapper studentMapper;
@@ -63,6 +69,18 @@ class BaseSpringbootDemoApplicationTests {
     private ActorMapper actorMapper;
     @Autowired
     private ObjectMapper objectMapper;
+
+    public BaseSpringbootDemoApplicationTests(){}
+    @Autowired
+    private MsgCenterServiceTemplate msgCenterServiceTemplate;
+    @Autowired
+    private EmailServiceTemplate emailServiceTemplate;
+    @Autowired
+    private EmailCaptchaTemplate emailCaptchaTemplate;
+    @Autowired
+    private SmsServiceTemplate smsServiceTemplate;
+    @Autowired
+    private SmsCaptchaTemplate smsCaptchaTemplate;
 
 
     //=========================mybatisplus测试==============================
@@ -112,10 +130,17 @@ class BaseSpringbootDemoApplicationTests {
     //==================================redis测试=======================================
     @Test
     public void test06(){
-        redisTemplate.opsForValue().set("age",18);
-        Integer age = (Integer) redisTemplate.opsForValue().get("age");
+        //redisTemplate.opsForValue().set("age",18);
+        //Integer age = (Integer) redisTemplate.opsForValue().get("age");
         //String name = (String) redisTemplate.opsForValue().get("key");
-        System.out.println(age);
+        //System.out.println(age);
+//        redisTemplate.opsForSet().add("keys", "123");
+//        redisTemplate.opsForSet().add("keys", "234");
+//        redisTemplate.opsForSet().add("keys", "123");
+//        Set<String> keys = redisTemplate.opsForSet().members("keys");
+//        System.out.println(keys);
+        stringRedisTemplate.opsForValue().set("str", "chenjianwen", 50, TimeUnit.SECONDS);
+        System.out.println(stringRedisTemplate.opsForValue().get("str"));
     }
     @Test
     public void test07(){
@@ -435,5 +460,37 @@ class BaseSpringbootDemoApplicationTests {
         s.setName("Chen");
         s.setClassName("501");
         studentMapper.insert(s);
+    }
+
+    @Test
+    public void test44() throws MessageCenterBuilderException, MessageCenterSendException {
+        //msgCenterTemplate.msg(MessageSubject.newBuilder().template("1245233580516110337").replace("god is a girl", "10010").users("玛莎拉蒂", "兰博基尼").platform("demo hunter").build());
+        msgCenterServiceTemplate.msg(MessageSubject.newBuilder().template("1244525235211681793").users("remote").platform("13香").build());
+    }
+
+    @Test
+    public void test45() throws MessageCenterBuilderException, MessageCenterSendException {
+        //emailServiceTemplate.email(EmailSubject.newBuilder().template("1249577988099248130").email("alichen3116@aliyun.com").platform("base-springboot").build());
+        //emailServiceTemplate.email(EmailSubject.newBuilder().template("1249578436797501442").email("alichen3116@aliyun.com").platform("base-springboot").replace("chenjianwen", "2020-04-05").build());
+        emailServiceTemplate.email(EmailSubject.newBuilder().template("1249577988099248130").email("alichen3116@aliyun.com").platform("base-springboot").build());
+
+    }
+
+    @Test
+    public void test46() throws MessageCenterSendException {
+        String value = stringRedisTemplate.opsForValue().get("email:code:1249577988099248130:alichen3116@aliyun.com");
+        boolean b = emailCaptchaTemplate.checkCaptcha("1249577988099248130", "alichen3116@aliyun.com", "526307");
+        System.out.println(b);
+    }
+
+    @Test
+    public void test47() throws MessageCenterBuilderException, MessageCenterSendException {
+        smsServiceTemplate.sms(SmsSubject.newBuilder().template("1262264766891393025").mobile("13023635020").type(SmsTypeEnum.S).platform("base-springboot").replace("chen", "身份证", "666").build());
+    }
+
+    @Test
+    public void test48() throws MessageCenterSendException {
+        boolean b = smsCaptchaTemplate.checkCaptcha("1262263581799186433", "13023635020", "879086");
+        System.out.println(b);
     }
 }
