@@ -186,12 +186,12 @@
 
     </dependencies>
 
-<!--    <repositories>-->
-<!--        <repository>-->
-<!--            <id>coralglobal-nexus</id>-->
-<!--            <url>http://nexus1.coralglobal.cn/repository/maven-public/</url>-->
-<!--        </repository>-->
-<!--    </repositories>-->
+    <repositories>
+        <repository>
+            <id>coralglobal-nexus</id>
+            <url>http://nexus1.coralglobal.cn/repository/maven-public/</url>
+        </repository>
+    </repositories>
 
     <!-- 备份 -->
 <!--    <repositories>-->

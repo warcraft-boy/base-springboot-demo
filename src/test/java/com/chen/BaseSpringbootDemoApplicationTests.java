@@ -485,7 +485,7 @@ public class BaseSpringbootDemoApplicationTests {
 
     @Test
     public void test47() throws MessageCenterBuilderException, MessageCenterSendException {
-        smsServiceTemplate.sms(SmsSubject.newBuilder().template("1262264766891393025").mobile("13023635020").type(SmsTypeEnum.S).platform("base-springboot").replace("chen", "身份证", "666").build());
+        smsServiceTemplate.sms(SmsSubject.newBuilder().template("1262264766891393025").mobile("13023635020").type(SmsTypeEnum.S).platform("bilibili").replace("chen", "身份证", "666").build());
     }
 
     @Test
