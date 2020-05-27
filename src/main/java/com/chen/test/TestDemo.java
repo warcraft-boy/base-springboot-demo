@@ -297,7 +297,10 @@ public class TestDemo {
     @Test
     public void test(){
         AnnotationConfigApplicationContext ac = new AnnotationConfigApplicationContext(FishConfig.class);
+        FishConfig fishConfig = ac.getBean("fishConfig", FishConfig.class);
+        System.out.println(fishConfig);
         Fish fish = ac.getBean("fish", Fish.class);
+        System.out.println(fish);
         fish.swim("黄鱼");
     }
 }
