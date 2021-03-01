@@ -170,12 +170,50 @@
             <version>1.2.47</version>
         </dependency>
 
+        <dependency>
+            <groupId>cn.hutool</groupId>
+            <artifactId>hutool-all</artifactId>
+            <version>5.3.7</version>
+        </dependency>
+
+        <dependency>
+            <groupId>com.opencsv</groupId>
+            <artifactId>opencsv</artifactId>
+            <version>3.3</version>
+        </dependency>
+
+        <!-- https://mvnrepository.com/artifact/org.apache.poi/poi-ooxml -->
+        <dependency>
+            <groupId>org.apache.poi</groupId>
+            <artifactId>poi-ooxml</artifactId>
+            <version>4.1.2</version>
+        </dependency>
+        <!-- pdf生成itext -->
+        <dependency>
+            <groupId>com.itextpdf</groupId>
+            <artifactId>itextpdf</artifactId>
+            <version>5.5.13</version>
+        </dependency>
+        <dependency>
+            <groupId>com.itextpdf</groupId>
+            <artifactId>itext-asian</artifactId>
+            <version>5.2.0</version>
+        </dependency>
+        <!-- 热部署 -->
+        <dependency>
+            <groupId>org.springframework.boot</groupId>
+            <artifactId>spring-boot-devtools</artifactId>
+            <version>2.0.4.RELEASE</version>
+            <!-- 启用 -->
+            <optional>true</optional>
+        </dependency>
+
         <!-- message center api -->
 
         <dependency>
             <groupId>cn.coralglobal.service</groupId>
             <artifactId>message-center-api</artifactId>
-            <version>2.4.1</version>
+            <version>2.4.3</version>
         </dependency>
 
 <!--        <dependency>-->
@@ -186,12 +224,12 @@
 
     </dependencies>
 
-    <repositories>
-        <repository>
-            <id>coralglobal-nexus</id>
-            <url>http://nexus1.coralglobal.cn/repository/maven-public/</url>
-        </repository>
-    </repositories>
+<!--    <repositories>-->
+<!--        <repository>-->
+<!--            <id>coralglobal-nexus</id>-->
+<!--            <url>http://nexus1.coralglobal.cn/repository/maven-public/</url>-->
+<!--        </repository>-->
+<!--    </repositories>-->
 
     <!-- 备份 -->
 <!--    <repositories>-->
@@ -233,6 +271,9 @@
                 <configuration>
                     <source>1.8</source>
                     <target>1.8</target>
+                </configuration>
+                <configuration>
+                    <fork>true</fork>
                 </configuration>
             </plugin>
         </plugins>

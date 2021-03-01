@@ -4,6 +4,7 @@ import cn.coralglobal.message.api.enums.SmsTypeEnum;
 import cn.coralglobal.message.api.exception.MessageCenterBuilderException;
 import cn.coralglobal.message.api.exception.MessageCenterSendException;
 import cn.coralglobal.message.api.service.*;
+import cn.hutool.core.io.file.FileReader;
 import com.baomidou.mybatisplus.core.toolkit.Wrappers;
 import com.chen.config.CustomConfig;
 import com.chen.mongodb.model.Department;
@@ -81,6 +82,7 @@ public class BaseSpringbootDemoApplicationTests {
     private SmsServiceTemplate smsServiceTemplate;
     @Autowired
     private SmsServiceCaptchaTemplate smsCaptchaTemplate;
+
 
 
     //=========================mybatisplus测试==============================
@@ -465,32 +467,57 @@ public class BaseSpringbootDemoApplicationTests {
     @Test
     public void test44() throws MessageCenterBuilderException, MessageCenterSendException {
         //msgCenterTemplate.msg(MessageSubject.newBuilder().template("1245233580516110337").replace("god is a girl", "10010").users("玛莎拉蒂", "兰博基尼").platform("demo hunter").build());
-        msgCenterServiceTemplate.msg(MessageSubject.newBuilder().template("1244525235211681793").users("remote").platform("13香").build());
+        msgCenterServiceTemplate.msg(MessageSubject.newBuilder().template("1245233580516110337").users("she").build());
     }
 
     @Test
     public void test45() throws MessageCenterBuilderException, MessageCenterSendException {
-        //emailServiceTemplate.email(EmailSubject.newBuilder().template("1249577988099248130").email("alichen3116@aliyun.com").platform("base-springboot").build());
+        emailServiceTemplate.email(EmailSubject.newBuilder().template("1249577988099248130").email("ChenJevin@163.COM").platform("base-springboot").build());
         //emailServiceTemplate.email(EmailSubject.newBuilder().template("1249578436797501442").email("alichen3116@aliyun.com").platform("base-springboot").replace("chenjianwen", "2020-04-05").build());
-        emailServiceTemplate.email(EmailSubject.newBuilder().template("1249577988099248130").email("alichen3116@aliyun.com").platform("base-springboot").build());
+//        emailServiceTemplate.email(EmailSubject.newBuilder().template("1249577988099248130").email("ChenJevin@163.com").platform("base-springboot").build());
 
     }
 
     @Test
     public void test46() throws MessageCenterSendException {
         String value = stringRedisTemplate.opsForValue().get("email:code:1249577988099248130:alichen3116@aliyun.com");
-        boolean b = emailCaptchaTemplate.checkCaptcha("1249577988099248130", "alichen3116@aliyun.com", "526307");
+        System.out.println(value);
+        boolean b = emailCaptchaTemplate.checkCaptcha("1249577988099248130", "alichen3116@aliyun.com", "603830");
         System.out.println(b);
     }
 
     @Test
     public void test47() throws MessageCenterBuilderException, MessageCenterSendException {
-        smsServiceTemplate.sms(SmsSubject.newBuilder().template("1262264766891393025").mobile("13023635020").type(SmsTypeEnum.S).platform("bilibili").replace("chen", "身份证", "666").build());
+        smsServiceTemplate.sms(SmsSubject.newBuilder().template("1285110131666747394").mobile("13023635020").type(SmsTypeEnum.V).build());
+        //smsServiceTemplate.sms(SmsSubject.newBuilder().template("1262258402450292738").mobile("13023635020").type(SmsTypeEnum.V).platform("bilibili").build());
     }
 
     @Test
     public void test48() throws MessageCenterSendException {
-        boolean b = smsCaptchaTemplate.checkCaptcha("1262263581799186433", "13023635020", "879086");
+        String value = stringRedisTemplate.opsForValue().get("sms:code:1262258402450292738:13023635020");
+        System.out.println(value);
+        boolean b = smsCaptchaTemplate.checkCaptcha("1262258402450292738", "13023635020", "627864");
         System.out.println(b);
+//        stringRedisTemplate.delete("sms:code:1262264766891393025:13023635020");
+    }
+
+    @Test
+    public void test49(){
+        String v = stringRedisTemplate.opsForValue().get("cg:captcha:img:am8b62611li29pdmc6no");
+        System.out.println(v);
+    }
+
+    @Test
+    public void test50() throws Exception {
+        //读取本地文件
+        FileReader fileReader = new FileReader("/Users/chenjianwen/Downloads/QQ_6.6.5.dmg");
+        //将文件转换成字节数组
+        byte[] result = fileReader.readBytes();
+        //通过Base64将字节数组转换成字符串
+        String fileContent = Base64.getEncoder().encodeToString(result);
+        EmailFile ef= new EmailFile();
+        ef.setFileName("QQ_6.6.5.dmg"); //自定义文件名称
+        ef.setFileContent(fileContent);
+        emailServiceTemplate.email(EmailSubject.newBuilder().template("1249577988099248130").email("alichen3116@aliyun.com").platform("base-springboot").file(ef).build());
     }
 }
