@@ -9,7 +9,8 @@ import java.util.regex.Pattern;
  **/
 public class UpperNumberUtil {
 
-    private static final Pattern AMOUNT_PATTERN = Pattern.compile("^(0|[1-9]\\d{0,11})\\.(\\d\\d)$"); // 不考虑分隔符的正确性
+    private static final Pattern AMOUNT_PATTERN1 = Pattern.compile("^(0|[1-9]\\d{0,11})\\.(\\d\\d)$"); // 不考虑分隔符的正确性
+    private static final Pattern AMOUNT_PATTERN2 = Pattern.compile("^(0|[1-9]\\d{0,11})$"); // 不考虑分隔符的正确性
     private static final char[] RMB_NUMS = "零壹贰叁肆伍陆柒捌玖".toCharArray();
 //    private static final String[] UNITS = { "元", "角", "分", "整" };
     private static final String[] UNITS = { "点", "整" };
@@ -26,31 +27,36 @@ public class UpperNumberUtil {
     public static String convert(String amount) throws IllegalArgumentException {
         // 去掉分隔符
         amount = amount.replace(",", "");
-
         // 验证金额正确性
         if (amount.equals("0.00")) {
             throw new IllegalArgumentException("金额不能为零.");
         }
-        Matcher matcher = AMOUNT_PATTERN.matcher(amount);
-        if (!matcher.find()) {
-            throw new IllegalArgumentException("输入金额有误.");
-        }
-
-        String integer = matcher.group(1); // 整数部分
-        String fraction = matcher.group(2); // 小数部分
-
+        Matcher matcher1 = AMOUNT_PATTERN1.matcher(amount);
+        Matcher matcher2 = AMOUNT_PATTERN2.matcher(amount);
         String result = "";
-        if (!integer.equals("0")) {
-            result += integer2rmb(integer) + UNITS[0]; // 整数部分
+        if (matcher1.find()) {
+            String integer = matcher1.group(1); // 整数部分
+            String fraction = matcher1.group(2); // 小数部分
+            if (!integer.equals("0") && !fraction.equals("00")) {
+                result += integer2rmb(integer) + UNITS[0]; // 整数部分
+            }
+            if (!integer.equals("0") && fraction.equals("00")) {
+                result += integer2rmb(integer); // 整数部分
+            }
+            if (fraction.equals("00")) {
+                result += UNITS[1]; // 添加[整]
+            } else if (fraction.startsWith("0") && integer.equals("0")) {
+                result += fraction2rmb(fraction).substring(1); // 去掉分前面的[零]
+            } else {
+                result += fraction2rmb(fraction); // 小数部分
+            }
         }
-        if (fraction.equals("00")) {
-            result += UNITS[1]; // 添加[整]
-        } else if (fraction.startsWith("0") && integer.equals("0")) {
-            result += fraction2rmb(fraction).substring(1); // 去掉分前面的[零]
-        } else {
-            result += fraction2rmb(fraction); // 小数部分
+        if(matcher2.find()){
+            String integer = matcher2.group(1); // 整数部分
+            if (!integer.equals("0")) {
+                result += integer2rmb(integer) + UNITS[1]; // 整数部分
+            }
         }
-
         return result;
     }
 

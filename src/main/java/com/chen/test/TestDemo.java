@@ -37,6 +37,8 @@ import java.time.format.DateTimeFormatter;
 import java.util.*;
 import java.util.List;
 import java.util.concurrent.atomic.AtomicInteger;
+import java.util.regex.Pattern;
+import java.util.stream.Collectors;
 
 /**
  * @Description: <br>
@@ -497,7 +499,8 @@ public class TestDemo {
     @Test
     public void test38(){
         //System.out.println(IdWorker.getIdStr());
-        System.out.println(UpperNumberUtil.convert("24232323.38"));
+        System.out.println(UpperNumberUtil.convert("24232320.34"));
+//        System.out.println(ChineseYuanUtil.convert("24232323.00"));
     }
 
     @Test
@@ -552,4 +555,28 @@ public class TestDemo {
         Lb lb = new Lb();
         lb.getAndIncrement();
     }
+
+    @Test
+    public void test42(){
+        Pattern AMOUNT_PATTERN1 = Pattern.compile("^(0|[1-9]\\d{0,11})\\.(\\d\\d)$");
+        Pattern AMOUNT_PATTERN2 = Pattern.compile("^(0|[1-9]\\d{0,11})$");
+        System.out.println(AMOUNT_PATTERN2.matcher("34").find());
+    }
+
+    @Test
+    public void test43(){
+        List<T> list = new ArrayList<>();
+        list.add(new T("t1"));
+        list.add(new T("t2"));
+        list.add(new T("t3"));
+        String s = list.stream().map(T::getT).collect(Collectors.joining("、"));
+        System.out.println(s); // t1、t2、t3
+    }
+
+    @Test
+    public void test44(){
+        System.out.println(System.getProperty("user.dir")); //能获取到当前项目路径：/Users/chenjianwen/myDisk/workspace/base-springboot-demo
+    }
+
+
 }
