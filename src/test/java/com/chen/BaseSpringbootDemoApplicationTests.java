@@ -23,10 +23,9 @@ import net.bytebuddy.asm.Advice;
 import org.bson.types.ObjectId;
 import org.junit.Test;
 import org.junit.runner.RunWith;
-import org.springframework.amqp.core.AmqpAdmin;
-import org.springframework.amqp.core.Binding;
-import org.springframework.amqp.core.DirectExchange;
+import org.springframework.amqp.core.*;
 import org.springframework.amqp.core.Queue;
+import org.springframework.amqp.rabbit.connection.CorrelationData;
 import org.springframework.amqp.rabbit.core.RabbitTemplate;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
@@ -40,6 +39,8 @@ import org.springframework.data.redis.core.StringRedisTemplate;
 import org.springframework.test.context.junit4.SpringRunner;
 import com.fasterxml.jackson.databind.ObjectMapper;
 
+import java.io.ByteArrayInputStream;
+import java.io.InputStream;
 import java.util.*;
 import java.util.concurrent.TimeUnit;
 import java.util.regex.Pattern;
@@ -447,6 +448,64 @@ public class BaseSpringbootDemoApplicationTests {
         amqpAdmin.declareBinding(new Binding("amqpadmin.queue", Binding.DestinationType.QUEUE, "amqpadmin.exchange.direct", "amqpadmin.queue", null));
     }
 
+    /**
+     * confirm模式
+     * 消息成功到达交换机时，ack=true。消息没到达交换机时，ack=false
+     */
+    @Test
+    public void test_42(){
+        rabbitTemplate.setConfirmCallback(new RabbitTemplate.ConfirmCallback() {
+            /**
+             *
+             * @param correlationData 相关配置信息
+             * @param ack   交换机是否收到消息
+             * @param cause 失败的信息
+             */
+            @Override
+            public void confirm(CorrelationData correlationData, boolean ack, String cause) {
+                if(ack){
+                    //发送成功
+                    System.out.println("消息发送成功");
+                    //TODO 发送成功后的逻辑
+
+                }else{
+                    //发送失败
+                    System.err.println("消息发送失败，原因：" + cause);
+                    //TODO 发送失败后的逻辑
+
+                }
+            }
+        });
+        rabbitTemplate.convertAndSend("amq.topic", "amqpadmin.queue", "hello mq");
+    }
+
+    /**
+     * 回退模式
+     * 消息成功达到交换机且未到达队列时，触发回调函数
+     */
+    @Test
+    public void test_43(){
+        rabbitTemplate.setReturnCallback(new RabbitTemplate.ReturnCallback() {
+            /**
+             *
+             * @param message   消息对象
+             * @param i     返回码
+             * @param s     错误信息
+             * @param exchange  交换机
+             * @param queue     队列
+             */
+            @Override
+            public void returnedMessage(Message message, int i, String s, String exchange, String queue) {
+                System.err.println(message);
+                System.err.println(i);
+                System.err.println(s);
+                System.err.println(exchange);
+                System.err.println(queue);
+            }
+        });
+        rabbitTemplate.setMandatory(true); // 设置强制标志 仅适用于回退模式
+        rabbitTemplate.convertAndSend("amq.topic", "amqpadmin.queue", "hello mq");
+    }
 
     //===============================多数据源测试=================================
     @Test
@@ -472,7 +531,7 @@ public class BaseSpringbootDemoApplicationTests {
 
     @Test
     public void test45() throws MessageCenterBuilderException, MessageCenterSendException {
-        emailServiceTemplate.email(EmailSubject.newBuilder().template("1249577988099248130").email("ChenJevin@163.COM").platform("base-springboot").build());
+        emailServiceTemplate.email(EmailSubject.newBuilder().template("1249577988099248130").email("alichen3116@aliyun.com").platform("base-springboot").build());
         //emailServiceTemplate.email(EmailSubject.newBuilder().template("1249578436797501442").email("alichen3116@aliyun.com").platform("base-springboot").replace("chenjianwen", "2020-04-05").build());
 //        emailServiceTemplate.email(EmailSubject.newBuilder().template("1249577988099248130").email("ChenJevin@163.com").platform("base-springboot").build());
 
@@ -519,5 +578,9 @@ public class BaseSpringbootDemoApplicationTests {
         ef.setFileName("QQ_6.6.5.dmg"); //自定义文件名称
         ef.setFileContent(fileContent);
         emailServiceTemplate.email(EmailSubject.newBuilder().template("1249577988099248130").email("alichen3116@aliyun.com").platform("base-springboot").file(ef).build());
+
+        //Base64将字符串转为字节数组，再转为流
+//        byte[] fileByte = cn.hutool.core.codec.Base64.decode(fileContent);
+//        InputStream is = new ByteArrayInputStream(fileByte);
     }
 }

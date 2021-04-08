@@ -42,11 +42,19 @@ spring:
 #    port: 5672
 #    username: guest
 #    password: guest
+#    virtual-host: /dev
+#    publisher-confirm-type: correlated  #消息发送确认回调
+#    listener:
+#      simple:
+#        acknowledge-mode: manual #消费者手动确认
+#    publisher-returns: true  #回退模式
     host: rabbitmq2.coralgolbal.com
     port: 5672
     username: admin
     password: cg123456
     virtual-host: /dev
+    publisher-confirm-type: correlated  #消息发送确认回调
+    publisher-returns: true #回退模式
 
   #mongodb
   mongodb:
@@ -54,6 +62,7 @@ spring:
 #    port: 27017
 #    database: test
     uri: mongodb://mongodb.coralgolbal.com:27017/cg
+   #uri: mongodb://admin:E7hmLq0mnweks4tyxL0I@172.16.100.63:27017,172.16.100.64:27017,172.16.100.65:27017/notice?authSource=admin&authMechanism=SCRAM-SHA-1
 
 
 #单数据源可以这样配置，多数据源需要专门的配置文件配置

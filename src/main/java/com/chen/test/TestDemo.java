@@ -15,6 +15,7 @@ import com.chen.redis.RedisUtil;
 import com.chen.test.demo2.UpperNumberUtil;
 import com.itextpdf.text.*;
 import com.itextpdf.text.pdf.PdfWriter;
+import lombok.val;
 import org.junit.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.AnnotationConfigApplicationContext;
@@ -578,5 +579,8 @@ public class TestDemo {
         System.out.println(System.getProperty("user.dir")); //能获取到当前项目路径：/Users/chenjianwen/myDisk/workspace/base-springboot-demo
     }
 
+    @Test
+    public void test45(){
 
+    }
 }

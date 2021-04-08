@@ -43,11 +43,18 @@ spring:
 #    username: guest
 #    password: guest
 #    virtual-host: /dev
+#    publisher-confirm-type: correlated  #消息发送确认回调
+#    listener:
+#      simple:
+#        acknowledge-mode: manual #消费者手动确认
+#    publisher-returns: true  #回退模式
     host: rabbitmq2.coralgolbal.com
     port: 5672
     username: admin
     password: cg123456
     virtual-host: /dev
+    publisher-confirm-type: correlated  #消息发送确认回调
+    publisher-returns: true #回退模式
 
   #mongodb
   mongodb:
