@@ -5,6 +5,8 @@ import cn.coralglobal.message.api.exception.MessageCenterBuilderException;
 import cn.coralglobal.message.api.exception.MessageCenterSendException;
 import cn.coralglobal.message.api.service.*;
 import cn.hutool.core.io.file.FileReader;
+import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
+import com.baomidou.mybatisplus.core.metadata.IPage;
 import com.baomidou.mybatisplus.core.toolkit.Wrappers;
 import com.chen.config.CustomConfig;
 import com.chen.mongodb.model.Department;
@@ -36,8 +38,10 @@ import org.springframework.data.mongodb.core.query.Query;
 import org.springframework.data.mongodb.core.query.Update;
 import org.springframework.data.redis.core.RedisTemplate;
 import org.springframework.data.redis.core.StringRedisTemplate;
+import org.springframework.test.context.TestPropertySource;
 import org.springframework.test.context.junit4.SpringRunner;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import org.springframework.util.StringUtils;
 
 import java.io.ByteArrayInputStream;
 import java.io.InputStream;
@@ -476,7 +480,7 @@ public class BaseSpringbootDemoApplicationTests {
                 }
             }
         });
-        rabbitTemplate.convertAndSend("amq.topic", "amqpadmin.queue", "hello mq");
+        rabbitTemplate.convertAndSend("amq.topic", "amqpadmin.*", "hello mq");
     }
 
     /**
@@ -504,7 +508,7 @@ public class BaseSpringbootDemoApplicationTests {
             }
         });
         rabbitTemplate.setMandatory(true); // 设置强制标志 仅适用于回退模式
-        rabbitTemplate.convertAndSend("amq.topic", "amqpadmin.queue", "hello mq");
+        rabbitTemplate.convertAndSend("amq.topic", "amqpadmin.*", "hello mq");
     }
 
     //===============================多数据源测试=================================
@@ -582,5 +586,43 @@ public class BaseSpringbootDemoApplicationTests {
         //Base64将字符串转为字节数组，再转为流
 //        byte[] fileByte = cn.hutool.core.codec.Base64.decode(fileContent);
 //        InputStream is = new ByteArrayInputStream(fileByte);
+    }
+
+    @Test
+    public void test51(){
+        com.baomidou.mybatisplus.extension.plugins.pagination.Page<Student> p = new com.baomidou.mybatisplus.extension.plugins.pagination.Page<>(1, 2);
+        LambdaQueryWrapper<Student> wrapper = new LambdaQueryWrapper<>();
+        IPage<Student> bsbcPage = studentMapper.selectPage(p, wrapper);
+        System.out.println(bsbcPage);
+    }
+
+    @Test
+    public void test52(){
+        Integer value = (Integer) redisTemplate.opsForValue().get("test");
+        if(value != null && value == 0){
+            System.err.println("次数已经用完");
+        }
+        if(value == null){
+            redisTemplate.opsForValue().set("test", 2, 24, TimeUnit.HOURS);
+        }
+        if(value != null && value > 0){
+            value = value - 1;
+            redisTemplate.opsForValue().set("test", value, 24, TimeUnit.HOURS);
+        }
+    }
+
+    @Test
+    public void test53(){
+        Integer val = (Integer) redisTemplate.opsForValue().get("test");
+        if(val == null){
+            redisTemplate.opsForValue().increment("test", 1);
+            redisTemplate.expire("test", 60, TimeUnit.SECONDS);
+        }else{
+            if(val > 3){
+                redisTemplate.expire("test", 60, TimeUnit.SECONDS);
+                System.err.println("err");
+            }
+            redisTemplate.opsForValue().increment("test", 1);
+        }
     }
 }

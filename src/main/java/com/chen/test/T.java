@@ -11,8 +11,4 @@ import lombok.Data;
 public class T {
 
     private String t;
-
-    public T(String t){
-        this.t = t;
-    }
 }

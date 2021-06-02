@@ -38,6 +38,7 @@ import java.time.format.DateTimeFormatter;
 import java.util.*;
 import java.util.List;
 import java.util.concurrent.atomic.AtomicInteger;
+import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 import java.util.stream.Collectors;
 
@@ -125,15 +126,6 @@ public class TestDemo {
         System.out.println(regex.matches("123456"));
     }
 
-    @Test
-    public void test09(){
-        Book book = new Book();
-        if(!StringUtils.isEmpty(book.getName())){
-            System.out.println(book);
-        }else{
-            System.out.println(3);
-        }
-    }
 
     /**
      * 正则替换，将指定内容替换到字符串的正则表达式中
@@ -499,8 +491,8 @@ public class TestDemo {
 
     @Test
     public void test38(){
-        //System.out.println(IdWorker.getIdStr());
-        System.out.println(UpperNumberUtil.convert("24232320.34"));
+        System.out.println(IdWorker.getIdStr());
+//        System.out.println(UpperNumberUtil.convert("24232320.34"));
 //        System.out.println(ChineseYuanUtil.convert("24232323.00"));
     }
 
@@ -566,12 +558,12 @@ public class TestDemo {
 
     @Test
     public void test43(){
-        List<T> list = new ArrayList<>();
-        list.add(new T("t1"));
-        list.add(new T("t2"));
-        list.add(new T("t3"));
-        String s = list.stream().map(T::getT).collect(Collectors.joining("、"));
-        System.out.println(s); // t1、t2、t3
+//        List<T> list = new ArrayList<>();
+//        list.add(new T("t1"));
+//        list.add(new T("t2"));
+//        list.add(new T("t3"));
+//        String s = list.stream().map(T::getT).collect(Collectors.joining("、"));
+//        System.out.println(s); // t1、t2、t3
     }
 
     @Test
@@ -581,6 +573,48 @@ public class TestDemo {
 
     @Test
     public void test45(){
+        String fileName = "adflakj3342.jpg";
+        System.out.println(fileName.substring(fileName.lastIndexOf(".") + 1));
+    }
 
+    @Test
+    public void test46(){
+        String a = "aaaa";
+        final String b = "aaaa";
+        int c = 11;
+        int d = 11;
+        System.out.println(a + c);
+        System.out.println(b + d);
+        System.out.println(a == b);
+        System.out.println(a + c == b + d);
+    }
+
+    @Test
+    public void test47() throws ParseException {
+        SimpleDateFormat sdf = new SimpleDateFormat("yyyyMMdd");
+        Date date = sdf.parse("20220601");
+        System.out.println(date);
+    }
+
+    @Test
+    public void test48(){
+        Pattern p = Pattern.compile("^((13[0-9])|(15[^4,\\D])|(18[0,5-9]))\\d{8}$");
+        String phone = "16166661111";
+        Matcher m = p.matcher(phone);
+        System.out.println(m.matches());
+    }
+
+    @Test
+    public void test49(){
+        boolean f = true;
+        if(f){
+
+        }else if(!f){
+
+        }else if(f){
+
+        }else {
+
+        }
     }
 }

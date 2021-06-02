@@ -7,20 +7,27 @@ import cn.hutool.core.text.csv.CsvWriter;
 import cn.hutool.core.util.CharsetUtil;
 import cn.hutool.poi.excel.ExcelUtil;
 import cn.hutool.poi.excel.ExcelWriter;
+import com.alibaba.fastjson.JSON;
+import com.alibaba.fastjson.JSONObject;
 import org.apache.poi.ss.usermodel.Font;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
+import org.springframework.web.multipart.MultipartFile;
 
 import javax.servlet.ServletOutputStream;
 import javax.servlet.http.HttpServletResponse;
+import java.io.File;
+import java.io.IOException;
 import java.io.OutputStreamWriter;
+import java.text.SimpleDateFormat;
+import java.util.Date;
+import java.util.HashMap;
 
 /**
  * @Description:
  * @Author chenjianwen
  * @Date 2020/5/18
  **/
-@RestController("userController1")
+@RestController
 public class UserController {
 
     private UserService userService;
@@ -91,5 +98,45 @@ public class UserController {
         writer.close();
         IoUtil.close(out);
         return response;
+    }
+
+    @PostMapping("/test/http")
+    public String httpTest(@RequestParam HashMap<String, Object> paramMap){
+        String s = (String) paramMap.get("t");
+        return s;
+    }
+
+    @PostMapping("/test/http2")
+    public String httpTest2(@RequestBody T t){
+//        JSONObject jo = JSON.parseObject(json);
+//        String s = jo.getString("t");
+        String s = t.getT();
+        return s;
+    }
+
+    @GetMapping("/test/http3")
+    public String httpTest3(){
+        System.out.println("121");
+        return "121";
+    }
+
+    /**
+     * 上传文件到本地服务器
+     * @param file
+     * @return
+     * @throws IOException
+     */
+    @PostMapping("/upload")
+    public String upload(MultipartFile file) throws IOException {
+        String originalFilename = file.getOriginalFilename(); //原始文件名称
+        String suffix = originalFilename.contains(".") ? originalFilename.substring(originalFilename.lastIndexOf(".") + 1) : null; //文件后缀
+        String newFileName = System.nanoTime() + "." + suffix;
+        String fileDir = "/" + new SimpleDateFormat("yyyyMMdd").format(new Date());
+        File dir = new File("/Users/chenjianwen/myDisk" + fileDir); ///Users/chenjianwen/myDisk这是我本地目录地址，LINUX服务器地址具体使用/data/...
+        if (!dir.exists()) {
+            dir.mkdirs();
+        }
+        file.transferTo(new File("/Users/chenjianwen/myDisk" + fileDir + "/" + newFileName));
+        return fileDir + "/" + newFileName;
     }
 }

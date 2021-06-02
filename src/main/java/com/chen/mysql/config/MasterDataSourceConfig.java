@@ -6,6 +6,7 @@ import org.apache.ibatis.session.SqlSessionFactory;
 import org.mybatis.spring.SqlSessionFactoryBean;
 import org.mybatis.spring.SqlSessionTemplate;
 import org.mybatis.spring.annotation.MapperScan;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.boot.context.properties.ConfigurationProperties;
 import org.springframework.boot.jdbc.DataSourceBuilder;
@@ -25,6 +26,9 @@ import javax.sql.DataSource;
 @MapperScan(basePackages = "com.chen.mysql.master.dao", sqlSessionTemplateRef = "masterSqlSessionTemplate")
 public class MasterDataSourceConfig {
 
+    @Autowired
+    private MybatisPlusConfig mybatisPlusConfig;
+
     @Bean(name = "masterDataSource")
     @ConfigurationProperties(prefix = "spring.datasource.master")
     @Primary
@@ -42,6 +46,8 @@ public class MasterDataSourceConfig {
         //SqlSessionFactoryBean bean = new SqlSessionFactoryBean();
         MybatisSqlSessionFactoryBean bean = new MybatisSqlSessionFactoryBean();
         bean.setDataSource(dataSource);
+        //配置mybatisplus分页插件
+        bean.setPlugins(mybatisPlusConfig.mybatisPlusInterceptor());
         bean.setMapperLocations(new PathMatchingResourcePatternResolver().getResources("classpath*:mapper/master/*.xml"));
         return bean.getObject();
     }
