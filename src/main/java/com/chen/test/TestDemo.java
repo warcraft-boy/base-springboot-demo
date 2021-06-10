@@ -606,15 +606,6 @@ public class TestDemo {
 
     @Test
     public void test49(){
-        boolean f = true;
-        if(f){
-
-        }else if(!f){
-
-        }else if(f){
-
-        }else {
-
-        }
+        System.out.println(T.class.equals(Object.class));
     }
 }
