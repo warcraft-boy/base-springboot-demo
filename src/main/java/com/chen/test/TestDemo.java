@@ -1,35 +1,37 @@
 package com.chen.test;
 
+import cn.hutool.core.io.file.FileReader;
 import cn.hutool.core.lang.Validator;
-import cn.hutool.core.text.csv.CsvConfig;
 import cn.hutool.core.text.csv.CsvUtil;
 import cn.hutool.core.text.csv.CsvWriteConfig;
 import cn.hutool.core.text.csv.CsvWriter;
 import cn.hutool.core.util.CharsetUtil;
+import cn.hutool.extra.pinyin.PinyinUtil;
+import cn.hutool.poi.excel.BigExcelWriter;
+import cn.hutool.poi.excel.ExcelUtil;
 import com.alibaba.fastjson.JSON;
 import com.baomidou.mybatisplus.core.toolkit.IdWorker;
-import com.baomidou.mybatisplus.core.toolkit.StringUtils;
 import com.chen.mysql.master.model.Student;
-import com.chen.rabbitmq.Book;
 import com.chen.redis.RedisUtil;
-import com.chen.test.demo2.UpperNumberUtil;
 import com.itextpdf.text.*;
 import com.itextpdf.text.pdf.PdfWriter;
-import lombok.val;
+import net.sourceforge.pinyin4j.PinyinHelper;
+import net.sourceforge.pinyin4j.format.HanyuPinyinCaseType;
+import net.sourceforge.pinyin4j.format.HanyuPinyinOutputFormat;
+import net.sourceforge.pinyin4j.format.exception.BadHanyuPinyinOutputFormatCombination;
+import org.apache.poi.ss.usermodel.Font;
 import org.junit.Test;
+import org.nustaq.offheap.structs.Templated;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.AnnotationConfigApplicationContext;
-import org.springframework.data.mongodb.core.mapping.TextScore;
 import redis.clients.jedis.Jedis;
 import redis.clients.jedis.params.SetParams;
-import sun.security.x509.NameConstraintsExtension;
 
 import java.io.*;
 import java.lang.reflect.Field;
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
 import java.math.BigDecimal;
-import java.text.DateFormat;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.time.LocalDateTime;
@@ -607,5 +609,156 @@ public class TestDemo {
     @Test
     public void test49(){
         System.out.println(T.class.equals(Object.class));
+    }
+
+    @Test
+    public void test50(){
+        T t = new T();
+        t.setT("tt");
+        List<T> list = new ArrayList<>();
+        list.add(t);
+        String newFileName = System.nanoTime() + ".xlsx";
+        String fileDir = "/" + new SimpleDateFormat("yyyyMMdd").format(new Date());
+        File dir = new File("/Users/chenjianwen/myDisk" + fileDir);
+        if (!dir.exists()) {
+            dir.mkdirs();
+        }
+        String filePath = fileDir + "/" + newFileName;
+        BigExcelWriter writer = ExcelUtil.getBigWriter(new File("/Users/chenjianwen/myDisk" + fileDir + "/" + newFileName));
+        writer.setColumnWidth(0, 10);
+        writer.merge(1, "记录");
+        if(list != null && list.size() > 0){
+            writer.addHeaderAlias("t", "流水号");
+            writer.write(list, true);
+        }else{
+            writer.writeCellValue(0, 1, "流水号");
+        }
+        //设置字体
+        Font font = writer.createFont();
+        font.setFontHeight((short) 240);
+        writer.getStyleSet().setFont(font, true);
+        writer.setRowHeight(0, 27);
+        writer.setRowHeight(1, 27);
+        writer.close();
+        System.out.println("/Users/chenjianwen/myDisk" + fileDir + "/" + newFileName);
+    }
+
+    @Test
+    public void test51(){
+        String data = "https://images1.coralglobal.cn/auth_images/20210622/99205320227127.pdf";
+        String suffix = data.substring(data.lastIndexOf(".") + 1);
+        System.out.println(suffix);
+    }
+
+    @Test
+    public void test52(){
+        String pinyin = PinyinUtil.getPinyin("成吉思汗");
+        System.out.println(pinyin);
+        String firstName = pinyin.substring(0, pinyin.indexOf(" "));
+        System.out.println(firstName);
+        String firstAlphabet =  firstName.substring(0,1);
+        String leftAlphabet = firstName.substring(1);
+        String surName = firstAlphabet.toUpperCase() + leftAlphabet;
+        System.out.println(surName);
+        String leftName = pinyin.substring(pinyin.indexOf(" ") + 1).replaceAll(" ", "");
+        System.out.println(leftName);
+        String firstAlphabet1 =  leftName.substring(0,1);
+        String leftAlphabet1 = leftName.substring(1);
+        String name = firstAlphabet1.toUpperCase() + leftAlphabet1;
+        System.out.println(name);
+        String eventualEnName = surName + " " + name;
+        System.out.println(eventualEnName);
+    }
+
+    @Test
+    public void test53() throws BadHanyuPinyinOutputFormatCombination {
+        HanyuPinyinOutputFormat format = new HanyuPinyinOutputFormat();
+        format.setCaseType(HanyuPinyinCaseType.LOWERCASE);
+        System.out.println(PinyinHelper.toHanYuPinyinString("我是中国人", format, "", true));
+    }
+
+    @Test
+    public void test54(){
+        String addr = "汉东省京州市温泉县南坊镇祁家村四组";
+        if(addr.contains("省") && addr.contains("市")){
+            String province = addr.substring(0, addr.indexOf("省") + 1);
+            String city = addr.substring(addr.indexOf("省") + 1, addr.indexOf("市") + 1);
+            System.out.println(province + "+" + city);
+            System.out.println(true);
+        }else{
+            System.out.println(false);
+        }
+    }
+
+    @Test
+    public void test55(){
+        String idNo = "342923199303193116";
+        String year = idNo.substring(6, 10);
+        String month = idNo.substring(10, 12);
+        String day = idNo.substring(12, 14);
+        System.out.println(year);
+        System.out.println(month);
+        System.out.println(day);
+        String bornDate = year + "年" + month + "月" + day + "日";
+        System.out.println(bornDate);
+    }
+
+    @Test
+    public void test56(){
+        String s = "0000004.12";
+        System.out.println(new BigDecimal(s));
+    }
+
+    @Test
+    public void test57() throws ParseException {
+        String s = "20210812";
+        Date d = new SimpleDateFormat("yyyyMMdd").parse(s);
+        System.out.println(d);
+    }
+
+    @Test
+    public void test58(){
+        Map<String, List<Fish>> map = new HashMap<>();
+        List<Fish> list = new ArrayList<>();
+        Fish f1 = new Fish();
+        f1.setName("机务");
+        list.add(f1);
+        map.put("f", list);
+        System.out.println(map);
+        Fish f2 = new Fish();
+        f2.setName("发发");
+        map.get("f").add(f2);
+        System.out.println(map);
+    }
+
+    @Test
+    public void test59(){
+        List<Fish> list = new ArrayList<>();
+        Fish f1 = new Fish();
+        f1.setName("a");
+        Fish f2 = new Fish();
+        f2.setName("a");
+        Fish f3 = new Fish();
+        f3.setName("b");
+        list.add(f1);
+        list.add(f2);
+        list.add(f3);
+        Set<String> collect = list.stream().map(Fish::getName).collect(Collectors.toSet());
+        System.out.println(collect);
+        for(String s : collect){
+            List<Fish> collect1 = list.stream().filter(x -> s.equals(x.getName())).collect(Collectors.toList());
+            System.out.println(collect1);
+        }
+    }
+
+    @Test
+    public void test60(){
+        //读取本地文件
+        cn.hutool.core.io.file.FileReader fileReader = new FileReader("/Users/chenjianwen/myDisk/file/company_file/picture/18be220e05fbb93f3458773e26584be4.jpg");
+        //将文件转换成字节数组
+        byte[] result = fileReader.readBytes();
+        //通过Base64将字节数组转换成字符串
+        String fileContent = Base64.getEncoder().encodeToString(result);
+        System.out.println(fileContent);
     }
 }

@@ -4,6 +4,11 @@ import cn.coralglobal.message.api.exception.MessageCenterBuilderException;
 import cn.coralglobal.message.api.service.EmailFile;
 import cn.coralglobal.message.api.service.EmailServiceTemplate;
 import cn.coralglobal.message.api.service.EmailSubject;
+import cn.hutool.poi.excel.BigExcelWriter;
+import cn.hutool.poi.excel.ExcelUtil;
+import com.alibaba.fastjson.JSON;
+import com.alibaba.fastjson.JSONObject;
+import com.baomidou.mybatisplus.core.toolkit.StringUtils;
 import com.itextpdf.text.*;
 import com.itextpdf.text.pdf.BaseFont;
 import com.itextpdf.text.pdf.PdfWriter;
@@ -15,12 +20,15 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.multipart.MultipartFile;
 
+import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import java.io.File;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
-import java.util.Base64;
+import java.text.SimpleDateFormat;
+import java.util.*;
+import java.util.List;
 
 /**
  * @Description:
@@ -336,5 +344,83 @@ public class TestController {
         document.close();
 
         return response;
+    }
+
+    @GetMapping("/create/excels")
+    @ResponseBody
+    public String excelz(){
+        T t = new T();
+        t.setT("tt");
+        t.setV("vv");
+        T t1 = new T();
+        t1.setT("tt1");
+        t1.setV("vv1");
+        T t2 = new T();
+        t2.setT("tt2");
+        t2.setV("vv2");
+        List<T> list = new ArrayList<>();
+        list.add(t);
+        list.add(t1);
+        list.add(t2);
+        String newFileName = System.nanoTime() + ".xlsx";
+        String fileDir = "/" + new SimpleDateFormat("yyyyMMdd").format(new Date());
+        File dir = new File("/Users/chenjianwen/myDisk" + fileDir);
+        if (!dir.exists()) {
+            dir.mkdirs();
+        }
+        String filePath = fileDir + "/" + newFileName;
+        BigExcelWriter writer = ExcelUtil.getBigWriter(new File("/Users/chenjianwen/myDisk" + fileDir + "/" + newFileName));
+        writer.setColumnWidth(0, 10);
+        writer.merge(1, "记录");
+        if(list != null && list.size() > 0){
+            writer.addHeaderAlias("t", "流水号");
+            writer.addHeaderAlias("v", "流水号2");
+            writer.write(list, true);
+        }else{
+            writer.writeCellValue(0, 1, "流水号");
+            writer.writeCellValue(1, 1, "流水号");
+        }
+        //设置字体
+        org.apache.poi.ss.usermodel.Font font = writer.createFont();
+        font.setFontHeight((short) 240);
+        writer.getStyleSet().setFont(font, true);
+        writer.setRowHeight(0, 27);
+        writer.setRowHeight(1, 27);
+        writer.close();
+        return "/Users/chenjianwen/myDisk" + filePath;
+    }
+
+    private static final String privateKey = "74d375e7-9f0d-4169-acec-204516e73527";      // 商户私钥
+    @RequestMapping(value = "/gateway/callback")
+    public String callback(HttpServletRequest request) {
+        JSONObject notifyJson = getRequestParams(request);
+        Boolean  pass = Sha256SignUtil.verifySign(notifyJson, privateKey, notifyJson.getString("sign"));  // 签名验证
+        if (pass) {
+            // 支付订单成功
+            if ("SUCCESS".equals(notifyJson.getString("status"))) {
+                // 成功操作，需要判断该订单状态是否已更改成功，避免订单重复操作
+            }
+        } else {
+            return "verify sign failed";
+        }
+        return "SUCCESS";
+    }
+
+    /**
+     * 将请求值装换成JSONObject
+     * @param request
+     * @return
+     */
+    public static JSONObject getRequestParams(HttpServletRequest request) {
+        Map map = new HashMap();
+        Enumeration<String> it = request.getParameterNames();
+        while (it.hasMoreElements())
+        {
+            String name = it.nextElement();
+            String value = request.getParameter(name);
+            value = (StringUtils.isBlank(value)) || (value.equals("null")) ? "" : value;
+            map.put(name, value);
+        }
+        return JSONObject.parseObject(JSON.toJSONString(map));
     }
 }

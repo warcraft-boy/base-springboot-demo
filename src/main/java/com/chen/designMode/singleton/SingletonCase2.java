@@ -13,9 +13,22 @@ public class SingletonCase2 {
     private SingletonCase2(){}
 
     //线程不安全
+//    public static SingletonCase2 getInstance(){
+//        if(INSTANCE == null){
+//            INSTANCE = new SingletonCase2();
+//        }
+//        return INSTANCE;
+//    }
+
+    //线程安全
     public static SingletonCase2 getInstance(){
-        if(INSTANCE == null){
-            INSTANCE = new SingletonCase2();
+
+        if(INSTANCE == null){       //避免锁竞争，影响效率
+            synchronized (SingletonCase2.class){
+                if(INSTANCE == null){
+                    INSTANCE = new SingletonCase2();
+                }
+            }
         }
         return INSTANCE;
     }

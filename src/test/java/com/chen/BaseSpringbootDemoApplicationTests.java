@@ -5,6 +5,7 @@ import cn.coralglobal.message.api.exception.MessageCenterBuilderException;
 import cn.coralglobal.message.api.exception.MessageCenterSendException;
 import cn.coralglobal.message.api.service.*;
 import cn.hutool.core.io.file.FileReader;
+import com.alibaba.fastjson.JSON;
 import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
 import com.baomidou.mybatisplus.core.metadata.IPage;
 import com.baomidou.mybatisplus.core.toolkit.Wrappers;
@@ -18,11 +19,37 @@ import com.chen.mysql.slave1.dao.ActorMapper;
 import com.chen.mysql.slave1.model.Actor;
 import com.chen.rabbitmq.Book;
 import com.chen.redis.RedisUtil;
+import com.chen.test.model.UserEs;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.mongodb.client.result.DeleteResult;
 import com.mongodb.client.result.UpdateResult;
 import net.bytebuddy.asm.Advice;
 import org.bson.types.ObjectId;
+import org.elasticsearch.action.admin.indices.delete.DeleteIndexRequest;
+import org.elasticsearch.action.bulk.BulkRequest;
+import org.elasticsearch.action.bulk.BulkResponse;
+import org.elasticsearch.action.delete.DeleteRequest;
+import org.elasticsearch.action.delete.DeleteResponse;
+import org.elasticsearch.action.get.GetRequest;
+import org.elasticsearch.action.get.GetResponse;
+import org.elasticsearch.action.index.IndexRequest;
+import org.elasticsearch.action.index.IndexResponse;
+import org.elasticsearch.action.search.SearchRequest;
+import org.elasticsearch.action.search.SearchResponse;
+import org.elasticsearch.action.support.master.AcknowledgedResponse;
+import org.elasticsearch.action.update.UpdateRequest;
+import org.elasticsearch.action.update.UpdateResponse;
+import org.elasticsearch.client.RequestOptions;
+import org.elasticsearch.client.RestHighLevelClient;
+import org.elasticsearch.client.indices.CreateIndexRequest;
+import org.elasticsearch.client.indices.CreateIndexResponse;
+import org.elasticsearch.client.indices.GetIndexRequest;
+import org.elasticsearch.common.unit.TimeValue;
+import org.elasticsearch.common.xcontent.XContentType;
+import org.elasticsearch.index.query.QueryBuilders;
+import org.elasticsearch.index.query.TermQueryBuilder;
+import org.elasticsearch.search.SearchHit;
+import org.elasticsearch.search.builder.SearchSourceBuilder;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.springframework.amqp.core.*;
@@ -44,6 +71,7 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import org.springframework.util.StringUtils;
 
 import java.io.ByteArrayInputStream;
+import java.io.IOException;
 import java.io.InputStream;
 import java.util.*;
 import java.util.concurrent.TimeUnit;
@@ -87,6 +115,8 @@ public class BaseSpringbootDemoApplicationTests {
     private SmsServiceTemplate smsServiceTemplate;
     @Autowired
     private SmsServiceCaptchaTemplate smsCaptchaTemplate;
+    @Autowired
+    private RestHighLevelClient restHighLevelClient;
 
 
 
@@ -535,7 +565,9 @@ public class BaseSpringbootDemoApplicationTests {
 
     @Test
     public void test45() throws MessageCenterBuilderException, MessageCenterSendException {
-        emailServiceTemplate.email(EmailSubject.newBuilder().template("1249577988099248130").email("alichen3116@aliyun.com").platform("base-springboot").build());
+        emailServiceTemplate.email(EmailSubject.newBuilder().template("1462617943169871873").email("alichen3116@aliyun.com").number("123456").replace("123456").platform("base-springboot").build());
+//        emailServiceTemplate.email(EmailSubject.newBuilder().template("1462617943169871873").email("alichen3116@aliyun.com").number("666").replace("666").platform("base-springboot").build());
+//        emailServiceTemplate.email(EmailSubject.newBuilder().template("1285138969192845314").email("alichen3116@aliyun.com").replace("kaka").platform("base-springboot").build());
         //emailServiceTemplate.email(EmailSubject.newBuilder().template("1249578436797501442").email("alichen3116@aliyun.com").platform("base-springboot").replace("chenjianwen", "2020-04-05").build());
 //        emailServiceTemplate.email(EmailSubject.newBuilder().template("1249577988099248130").email("ChenJevin@163.com").platform("base-springboot").build());
 
@@ -543,15 +575,16 @@ public class BaseSpringbootDemoApplicationTests {
 
     @Test
     public void test46() throws MessageCenterSendException {
-        String value = stringRedisTemplate.opsForValue().get("email:code:1249577988099248130:alichen3116@aliyun.com");
+        String value = stringRedisTemplate.opsForValue().get("email:code:1281130574945300481:alichen3116@aliyun.com");
         System.out.println(value);
-        boolean b = emailCaptchaTemplate.checkCaptcha("1249577988099248130", "alichen3116@aliyun.com", "603830");
+        boolean b = emailCaptchaTemplate.checkCaptcha("1281130574945300481", "alichen3116@aliyun.com", "108090", null);
         System.out.println(b);
     }
 
     @Test
     public void test47() throws MessageCenterBuilderException, MessageCenterSendException {
-        smsServiceTemplate.sms(SmsSubject.newBuilder().template("1285110131666747394").mobile("13023635020").type(SmsTypeEnum.V).build());
+//        smsServiceTemplate.sms(SmsSubject.newBuilder().template("1462670599091400705").mobile("13023635020").number("123456").replace("123456").type(SmsTypeEnum.S).build());
+        smsServiceTemplate.sms(SmsSubject.newBuilder().template("1353580357366087682").mobile("13023635020").replace("111").type(SmsTypeEnum.S).build());
         //smsServiceTemplate.sms(SmsSubject.newBuilder().template("1262258402450292738").mobile("13023635020").type(SmsTypeEnum.V).platform("bilibili").build());
     }
 
@@ -559,7 +592,7 @@ public class BaseSpringbootDemoApplicationTests {
     public void test48() throws MessageCenterSendException {
         String value = stringRedisTemplate.opsForValue().get("sms:code:1262258402450292738:13023635020");
         System.out.println(value);
-        boolean b = smsCaptchaTemplate.checkCaptcha("1262258402450292738", "13023635020", "627864");
+        boolean b = smsCaptchaTemplate.checkCaptcha("1262258402450292738", "13023635020", "606874", null);
         System.out.println(b);
 //        stringRedisTemplate.delete("sms:code:1262264766891393025:13023635020");
     }
@@ -625,4 +658,161 @@ public class BaseSpringbootDemoApplicationTests {
             redisTemplate.opsForValue().increment("test", 1);
         }
     }
+
+
+    //===============================elasticsearch测试开始=================================
+
+    /**
+     * 创建索引，PUT或POST命令
+     */
+    @Test
+    public void test54() throws IOException {
+        //创建索引
+        CreateIndexRequest chen_index = new CreateIndexRequest("chen_index1");
+        CreateIndexResponse createIndexResponse = restHighLevelClient.indices().create(chen_index, RequestOptions.DEFAULT);
+        System.out.println(createIndexResponse);
+    }
+
+    /**
+     * 删除索引
+     */
+    @Test
+    public void test55() throws IOException {
+        GetIndexRequest chen_index1 = new GetIndexRequest("chen_index1");
+        boolean exists = restHighLevelClient.indices().exists(chen_index1, RequestOptions.DEFAULT);
+        if(exists){
+            //判断索引是否存在
+            DeleteIndexRequest dr = new DeleteIndexRequest("chen_index1");
+            AcknowledgedResponse delete = restHighLevelClient.indices().delete(dr, RequestOptions.DEFAULT);
+            System.out.println(delete.isAcknowledged());
+        }else{
+            System.out.println("该索引不存在");
+        }
+    }
+
+    /**
+     * 添加文档
+     */
+    @Test
+    public void test56() throws IOException {
+        UserEs userEs = new UserEs("橘右京", 18);
+        //创建请求
+        IndexRequest request = new IndexRequest("ju_index");
+        //规则，相当于put /ju_index/_doc/1
+        request.id("1");
+        request.timeout(TimeValue.timeValueSeconds(1));
+        request.timeout("1s");
+        //将请求封装成json数据
+        request.source(JSON.toJSONString(userEs), XContentType.JSON);
+        //客户端发送请求
+        IndexResponse index = restHighLevelClient.index(request, RequestOptions.DEFAULT);
+        System.out.println(index.toString());
+        System.out.println(index.status());
+    }
+
+    /**
+     * 获取文档，相当于 GET /index/_doc/1
+     */
+    @Test
+    public void test57() throws Exception {
+        GetRequest ju_index = new GetRequest("ju_index", "1");
+        boolean exists = restHighLevelClient.exists(ju_index, RequestOptions.DEFAULT);
+        if(exists){
+            GetResponse documentFields = restHighLevelClient.get(ju_index, RequestOptions.DEFAULT);
+            System.out.println(documentFields.getSourceAsString());
+        }else {
+            System.out.println("没有此文档");
+        }
+    }
+
+    /**
+     * 更新文档
+     */
+    @Test
+    public void test58() throws IOException {
+        GetRequest ju_index = new GetRequest("ju_index", "1");
+        boolean exists = restHighLevelClient.exists(ju_index, RequestOptions.DEFAULT);
+        if(exists){
+            UpdateRequest ur = new UpdateRequest("ju_index", "1");
+            ur.timeout("1s");
+
+            UserEs us = new UserEs("玛维", 16);
+            ur.doc(JSON.toJSONString(us), XContentType.JSON);
+
+            UpdateResponse update = restHighLevelClient.update(ur, RequestOptions.DEFAULT);
+            System.out.println(update.status());
+        }else{
+            System.out.println("没有此文档");
+        }
+    }
+
+    /**
+     * 删除文档
+     */
+    @Test
+    public void test59() throws IOException {
+        GetRequest ju_index = new GetRequest("ju_index", "1");
+        boolean exists = restHighLevelClient.exists(ju_index, RequestOptions.DEFAULT);
+        if(exists){
+            DeleteRequest dr = new DeleteRequest("ju_index", "1");
+            dr.timeout("1s");
+
+            DeleteResponse delete = restHighLevelClient.delete(dr, RequestOptions.DEFAULT);
+            System.out.println(delete.status());
+        }else {
+            System.out.println("没有此文档");
+        }
+    }
+
+    /**
+     * 批量添加文档
+     */
+    @Test
+    public void test60() throws IOException {
+        BulkRequest bulkRequest = new BulkRequest();
+        bulkRequest.timeout("1s");
+
+        ArrayList<UserEs> ues = new ArrayList<>();
+        ues.add(new UserEs("玛维1", 1));
+        ues.add(new UserEs("玛维2", 2));
+        ues.add(new UserEs("玛维3", 3));
+        ues.add(new UserEs("玛维4", 4));
+
+        for(int i = 0; i < ues.size(); i++){
+            bulkRequest.add(new IndexRequest("ju_index")
+                        .id("" + (i+1)) //不生成id，会随机生成id
+                        .source(JSON.toJSONString(ues.get(i)), XContentType.JSON));
+        }
+        BulkResponse bulk = restHighLevelClient.bulk(bulkRequest, RequestOptions.DEFAULT);
+        System.out.println(bulk.hasFailures());
+    }
+
+    /**
+     * 条件构造查询
+     */
+    @Test
+    public void test61() throws IOException {
+        SearchRequest ju_index = new SearchRequest("ju_index");
+        SearchSourceBuilder searchSourceBuilder = new SearchSourceBuilder();
+
+        TermQueryBuilder termQueryBuilder = QueryBuilders.termQuery("name", "qinjiang1");
+        searchSourceBuilder.query(termQueryBuilder);
+
+        //分页
+        searchSourceBuilder.from(0);
+        searchSourceBuilder.size(3);
+
+        searchSourceBuilder.timeout(TimeValue.timeValueSeconds(6)); //设置超时时间
+
+        ju_index.source(searchSourceBuilder);
+        SearchResponse search = restHighLevelClient.search(ju_index, RequestOptions.DEFAULT);
+        System.out.println(JSON.toJSONString(search.getHits()));
+        for(SearchHit sh : search.getHits()){
+            System.out.println(sh.getSourceAsMap().toString());
+        }
+    }
+
+    //===============================elasticsearch测试结束=================================
+
+
 }
