@@ -707,6 +707,8 @@ public class TestDemo {
     public void test56(){
         String s = "0000004.12";
         System.out.println(new BigDecimal(s));
+        String id = new SimpleDateFormat("yyyyMMddHHmmss").format(new Date());
+        System.out.println(id);
     }
 
     @Test

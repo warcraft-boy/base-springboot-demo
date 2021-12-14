@@ -24,6 +24,7 @@ import com.fasterxml.jackson.core.JsonProcessingException;
 import com.mongodb.client.result.DeleteResult;
 import com.mongodb.client.result.UpdateResult;
 import net.bytebuddy.asm.Advice;
+import org.apache.kafka.clients.producer.RecordMetadata;
 import org.bson.types.ObjectId;
 import org.elasticsearch.action.admin.indices.delete.DeleteIndexRequest;
 import org.elasticsearch.action.bulk.BulkRequest;
@@ -65,15 +66,20 @@ import org.springframework.data.mongodb.core.query.Query;
 import org.springframework.data.mongodb.core.query.Update;
 import org.springframework.data.redis.core.RedisTemplate;
 import org.springframework.data.redis.core.StringRedisTemplate;
+import org.springframework.kafka.core.KafkaTemplate;
+import org.springframework.kafka.support.SendResult;
 import org.springframework.test.context.TestPropertySource;
 import org.springframework.test.context.junit4.SpringRunner;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import org.springframework.util.StringUtils;
+import org.springframework.util.concurrent.ListenableFuture;
+import org.springframework.util.concurrent.ListenableFutureCallback;
 
 import java.io.ByteArrayInputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.util.*;
+import java.util.concurrent.ExecutionException;
 import java.util.concurrent.TimeUnit;
 import java.util.regex.Pattern;
 
@@ -117,6 +123,8 @@ public class BaseSpringbootDemoApplicationTests {
     private SmsServiceCaptchaTemplate smsCaptchaTemplate;
     @Autowired
     private RestHighLevelClient restHighLevelClient;
+    @Autowired
+    private KafkaTemplate<String, Object> kafkaTemplate;
 
 
 
@@ -813,6 +821,47 @@ public class BaseSpringbootDemoApplicationTests {
     }
 
     //===============================elasticsearch测试结束=================================
+
+
+    //===============================kafka测试结束=================================
+
+    /**
+     * kafka同步发送消息
+     * @throws ExecutionException
+     * @throws InterruptedException
+     */
+    @Test
+    public void test62() throws ExecutionException, InterruptedException {
+        ListenableFuture<SendResult<String, Object>> send = kafkaTemplate.send("chenjianwen", 1, "hello", "kafka111");
+        SendResult<String, Object> result = send.get();
+        RecordMetadata recordMetadata = result.getRecordMetadata();
+        System.out.println(recordMetadata);
+        System.out.println("主题-" + recordMetadata.topic());
+        System.out.println("分区-" + recordMetadata.partition());
+        System.out.println("偏移量-" + recordMetadata.offset());
+    }
+
+    @Test
+    public void test63(){
+        ListenableFuture<SendResult<String, Object>> send = kafkaTemplate.send("chenjianwen", 2, "hello", "kafka222");
+        send.addCallback(new ListenableFutureCallback<SendResult<String, Object>>() {
+            @Override
+            public void onFailure(Throwable ex) {
+                System.out.println("发送消息失败，" + ex.getMessage());
+            }
+
+            @Override
+            public void onSuccess(SendResult<String, Object> result) {
+                RecordMetadata recordMetadata = result.getRecordMetadata();
+                System.out.println("发送消息成功");
+                System.out.println("主题-" + recordMetadata.topic());
+                System.out.println("分区-" + recordMetadata.partition());
+                System.out.println("偏移量-" + recordMetadata.offset());
+            }
+        });
+    }
+
+    //===============================kafka测试结束=================================
 
 
 }
