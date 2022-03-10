@@ -823,6 +823,7 @@ public class BaseSpringbootDemoApplicationTests {
     //===============================elasticsearch测试结束=================================
 
 
+
     //===============================kafka测试结束=================================
 
     /**
@@ -841,9 +842,12 @@ public class BaseSpringbootDemoApplicationTests {
         System.out.println("偏移量-" + recordMetadata.offset());
     }
 
+    /**
+     * kafka异步发送消息
+     */
     @Test
     public void test63(){
-        ListenableFuture<SendResult<String, Object>> send = kafkaTemplate.send("chenjianwen", 2, "hello", "kafka222");
+        ListenableFuture<SendResult<String, Object>> send = kafkaTemplate.send("chenjianwen", 1, "hello", "kafka222");
         send.addCallback(new ListenableFutureCallback<SendResult<String, Object>>() {
             @Override
             public void onFailure(Throwable ex) {

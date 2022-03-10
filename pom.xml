@@ -11,9 +11,9 @@
         <relativePath/> <!-- lookup parent from repository -->
     </parent>
 
-    <groupId>com.chen</groupId>
-    <artifactId>base-springboot-demo</artifactId>
-    <version>20191204</version>
+        <groupId>com.chen</groupId>
+        <artifactId>base-springboot-demo</artifactId>
+        <version>20191204</version>
     <name>base-springboot-demo</name>
     <description>Demo project for Spring Boot</description>
 

@@ -12,7 +12,10 @@ import cn.hutool.poi.excel.ExcelUtil;
 import com.alibaba.fastjson.JSON;
 import com.baomidou.mybatisplus.core.toolkit.IdWorker;
 import com.chen.mysql.master.model.Student;
+import com.chen.proxy.jdk.Maotai;
+import com.chen.proxy.jdk.Wine;
 import com.chen.redis.RedisUtil;
+import com.chen.test.demo2.UpperNumberUtil;
 import com.itextpdf.text.*;
 import com.itextpdf.text.pdf.PdfWriter;
 import net.sourceforge.pinyin4j.PinyinHelper;
@@ -28,6 +31,7 @@ import redis.clients.jedis.Jedis;
 import redis.clients.jedis.params.SetParams;
 
 import java.io.*;
+import java.lang.reflect.Constructor;
 import java.lang.reflect.Field;
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
@@ -493,8 +497,8 @@ public class TestDemo {
 
     @Test
     public void test38(){
-        System.out.println(IdWorker.getIdStr());
-//        System.out.println(UpperNumberUtil.convert("24232320.34"));
+//        System.out.println(IdWorker.getIdStr());
+        System.out.println(UpperNumberUtil.convert("24232320.38"));
 //        System.out.println(ChineseYuanUtil.convert("24232323.00"));
     }
 
@@ -762,5 +766,71 @@ public class TestDemo {
         //通过Base64将字节数组转换成字符串
         String fileContent = Base64.getEncoder().encodeToString(result);
         System.out.println(fileContent);
+    }
+
+    @Test
+    public void test61(){
+        Document document = new Document();
+        //设置文档页边距
+        document.setMargins(0,0,0,0);
+        FileOutputStream fos = null;
+        try {
+            fos = new FileOutputStream("/Users/chenjianwen/myDisk/1.pdf");
+            PdfWriter.getInstance(document, fos);
+            //打开文档
+            document.open();
+            //获取图片的宽高
+            Image image = Image.getInstance("/Users/chenjianwen/Pictures/emoji/diao.jpg");
+            float imageHeight=image.getScaledHeight();
+            float imageWidth=image.getScaledWidth();
+            //设置页面宽高与图片一致
+            Rectangle rectangle = new Rectangle(imageWidth, imageHeight);
+            document.setPageSize(rectangle);
+            //图片居中
+            image.setAlignment(Image.ALIGN_CENTER);
+            //新建一页添加图片
+            document.newPage();
+            document.add(image);
+        } catch (Exception ioe) {
+            System.out.println(ioe.getMessage());
+        } finally {
+            //关闭文档
+            document.close();
+            try {
+                fos.flush();
+                fos.close();
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
+        }
+    }
+
+    @Test
+    public void test62(){
+        String chars = "0123456789";
+        String code = "";
+        for (int i = 0; i < 6; i++) {
+            int rand = (int) (Math.random() * 10);
+            code += String.valueOf(chars.charAt(rand));
+        }
+        System.out.println(code);
+    }
+
+    @Test
+    public void test63(){
+        Wine wine = new Maotai();
+        System.out.println(wine.getClass());
+        System.out.println(wine.getClass().getInterfaces()[0]);
+    }
+
+    @Test
+    public void test64() throws NoSuchMethodException, IllegalAccessException, InvocationTargetException, InstantiationException {
+        Class<Maotai> maotaiClass = Maotai.class;
+        System.out.println(maotaiClass);
+        Constructor<Maotai> declaredConstructor = maotaiClass.getDeclaredConstructor();
+        System.out.println(declaredConstructor);
+        Maotai maotai = declaredConstructor.newInstance();
+        maotai.wine();
+        System.out.println(maotai);
     }
 }

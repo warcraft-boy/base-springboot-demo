@@ -12,7 +12,7 @@ public class ProxyMain {
     public static void main(String[] args) {
         Wine wine = new Maotai();
         InvocationHandler ih = new ProxyHandler<Wine>(wine);
-        Wine wineInstance = (Wine) Proxy.newProxyInstance(ProxyHandler.class.getClassLoader(), wine.getClass().getInterfaces(), ih);
+        Wine wineInstance = (Wine) Proxy.newProxyInstance(Wine.class.getClassLoader(), wine.getClass().getInterfaces(), ih);
         wineInstance.wine();
     }
 }
