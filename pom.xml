@@ -100,7 +100,7 @@
             <version>5.2.1.RELEASE</version>
         </dependency>
 
-        <!-- 第三部分：数据库和mybatis -->
+        <!-- 第三部分： 数据库和mybatis -->
         <dependency>
             <groupId>mysql</groupId>
             <artifactId>mysql-connector-java</artifactId>
