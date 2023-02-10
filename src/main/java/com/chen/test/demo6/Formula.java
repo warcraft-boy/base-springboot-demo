@@ -6,6 +6,7 @@ package com.chen.test.demo6;
  * @description: TODO
  * @date 2022/5/716:31
  */
+@FunctionalInterface
 public interface Formula {
 
     double calculate(int a);

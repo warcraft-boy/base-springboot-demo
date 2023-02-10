@@ -1,10 +1,11 @@
 package com.chen.test;
 
-import java.io.ByteArrayOutputStream;
-import java.io.IOException;
-import java.io.InputStream;
+import java.io.*;
 import java.net.HttpURLConnection;
+import java.net.MalformedURLException;
 import java.net.URL;
+
+import cn.hutool.core.io.IoUtil;
 import sun.misc.BASE64Encoder;
 
 /**
@@ -52,5 +53,29 @@ public class Base64Url {
         String url = "https://images1.coralglobal.cn/auth_images/20210510/1620611703832.jpeg";
         String ste = Base64Url.ImageToBase64ByOnline(url);
         System.out.println(ste);
+    }
+
+    /**
+     *
+     * @param fileUrl 网络文件，如 https://images1.coralglobal.cn/20180410/5763452865647252.jpg 这样
+     * @param localPath 本地文件夹，如我的是mac系统 "/Users/chenjianwen/file"
+     * @return
+     */
+    public static File urlToFile(String fileUrl, String localPath) throws Exception {
+        String fileName = fileUrl.substring(fileUrl.lastIndexOf("/") + 1);
+        //获取该链接的字节数组
+        URL url =new URL(fileUrl);
+        InputStream inputStream = url.openStream();
+        byte[] res = IoUtil.readBytes(inputStream);
+        //将文件字节数组写到一个临时文件中
+        File dir = new File(localPath);
+        if(!dir.exists()){
+            dir.mkdir();
+        }
+        File file = new File(localPath + File.separator + fileName);
+        FileOutputStream fos = new FileOutputStream(file);
+        BufferedOutputStream bos = new BufferedOutputStream(fos);
+        bos.write(res);
+        return file;
     }
 }

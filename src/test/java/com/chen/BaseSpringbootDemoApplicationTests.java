@@ -4,7 +4,9 @@ import cn.coralglobal.message.api.enums.SmsTypeEnum;
 import cn.coralglobal.message.api.exception.MessageCenterBuilderException;
 import cn.coralglobal.message.api.exception.MessageCenterSendException;
 import cn.coralglobal.message.api.service.*;
+import cn.hutool.core.io.IoUtil;
 import cn.hutool.core.io.file.FileReader;
+import cn.hutool.core.io.file.FileWriter;
 import com.alibaba.fastjson.JSON;
 import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
 import com.baomidou.mybatisplus.core.metadata.IPage;
@@ -75,9 +77,8 @@ import org.springframework.util.StringUtils;
 import org.springframework.util.concurrent.ListenableFuture;
 import org.springframework.util.concurrent.ListenableFutureCallback;
 
-import java.io.ByteArrayInputStream;
-import java.io.IOException;
-import java.io.InputStream;
+import java.io.*;
+import java.net.URL;
 import java.util.*;
 import java.util.concurrent.ExecutionException;
 import java.util.concurrent.TimeUnit;
@@ -573,11 +574,11 @@ public class BaseSpringbootDemoApplicationTests {
 
     @Test
     public void test45() throws MessageCenterBuilderException, MessageCenterSendException {
-        emailServiceTemplate.email(EmailSubject.newBuilder().template("1462617943169871873").email("alichen3116@aliyun.com").number("123456").replace("123456").platform("base-springboot").build());
+//        emailServiceTemplate.email(EmailSubject.newBuilder().template("1462617943169871873").email("alichen3116@aliyun.com").number("123456").replace("123456").platform("base-springboot").build());
 //        emailServiceTemplate.email(EmailSubject.newBuilder().template("1462617943169871873").email("alichen3116@aliyun.com").number("666").replace("666").platform("base-springboot").build());
 //        emailServiceTemplate.email(EmailSubject.newBuilder().template("1285138969192845314").email("alichen3116@aliyun.com").replace("kaka").platform("base-springboot").build());
         //emailServiceTemplate.email(EmailSubject.newBuilder().template("1249578436797501442").email("alichen3116@aliyun.com").platform("base-springboot").replace("chenjianwen", "2020-04-05").build());
-//        emailServiceTemplate.email(EmailSubject.newBuilder().template("1249577988099248130").email("ChenJevin@163.com").platform("base-springboot").build());
+        emailServiceTemplate.email(EmailSubject.newBuilder().template("1249577988099248130").email("ChenJevin@163.com").platform("base-springboot").build());
 
     }
 
@@ -614,15 +615,24 @@ public class BaseSpringbootDemoApplicationTests {
     @Test
     public void test50() throws Exception {
         //读取本地文件
-        FileReader fileReader = new FileReader("/Users/chenjianwen/Downloads/QQ_6.6.5.dmg");
+        FileReader fileReader = new FileReader("/Users/chenjianwen/Downloads/2493575558888032.xls");
         //将文件转换成字节数组
         byte[] result = fileReader.readBytes();
         //通过Base64将字节数组转换成字符串
         String fileContent = Base64.getEncoder().encodeToString(result);
-        EmailFile ef= new EmailFile();
-        ef.setFileName("QQ_6.6.5.dmg"); //自定义文件名称
-        ef.setFileContent(fileContent);
-        emailServiceTemplate.email(EmailSubject.newBuilder().template("1249577988099248130").email("alichen3116@aliyun.com").platform("base-springboot").file(ef).build());
+        System.out.println(result);
+        System.out.println(fileContent);
+
+        //网络文件转化为字节数组
+//        String s = "https://images1.coralglobal.cn/auth_images/20220613/2493575558888032.xls";
+//        URL url =new URL(s);
+//        InputStream inputStream = url.openStream();
+//        byte[] res = IoUtil.readBytes(inputStream);
+
+//        EmailFile ef= new EmailFile();
+//        ef.setFileName("QQ_6.6.5.dmg"); //自定义文件名称
+//        ef.setFileContent(fileContent);
+//        emailServiceTemplate.email(EmailSubject.newBuilder().template("1249577988099248130").email("alichen3116@aliyun.com").platform("base-springboot").file(ef).build());
 
         //Base64将字符串转为字节数组，再转为流
 //        byte[] fileByte = cn.hutool.core.codec.Base64.decode(fileContent);

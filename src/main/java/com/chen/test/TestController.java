@@ -14,10 +14,7 @@ import com.itextpdf.text.pdf.BaseFont;
 import com.itextpdf.text.pdf.PdfWriter;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.ResponseBody;
+import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 
 import javax.servlet.http.HttpServletRequest;
@@ -422,5 +419,17 @@ public class TestController {
             map.put(name, value);
         }
         return JSONObject.parseObject(JSON.toJSONString(map));
+    }
+
+    @PostMapping("/getHeader")
+    @ResponseBody
+    public String getHeader(@RequestHeader("Authorization") String Authorization){
+        String s1 = Authorization;
+        return null;
+    }
+
+    @GetMapping("/tt")
+    public void testfff(){
+        System.out.println(23);
     }
 }

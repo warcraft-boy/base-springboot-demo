@@ -22,4 +22,5 @@ public class TestFormula {
         System.out.println(formula.sqrt(3));
 //        System.out.println(formula.calculate(2));
     }
+
 }

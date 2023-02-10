@@ -8,7 +8,7 @@ package com.chen.designMode.singleton;
  **/
 public class SingletonCase2 {
 
-    private static SingletonCase2 INSTANCE;
+    private static volatile SingletonCase2 INSTANCE;
 
     private SingletonCase2(){}
 

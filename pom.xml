@@ -7,7 +7,7 @@
     <parent>
         <groupId>org.springframework.boot</groupId>
         <artifactId>spring-boot-starter-parent</artifactId>
-        <version>2.2.1.RELEASE</version>
+        <version>2.2.5.RELEASE</version>
         <relativePath/> <!-- lookup parent from repository -->
     </parent>
 
@@ -264,27 +264,32 @@
 <!--            <version>2.0.3.RELEASE</version>-->
 <!--        </dependency>-->
 
+        <dependency>
+            <groupId>org.springframework.cloud</groupId>
+            <artifactId>spring-cloud-starter-openfeign</artifactId>
+            <version>3.0.4</version>
+        </dependency>
         <!-- message center api -->
         <dependency>
             <groupId>cn.coralglobal.service</groupId>
             <artifactId>message-center-api</artifactId>
-            <version>2.4.9</version>
+            <version>2.5.3-SNAPSHOT</version>
         </dependency>
 
 <!--        <dependency>-->
 <!--            <groupId>cn.coralglobal.service</groupId>-->
 <!--            <artifactId>service-sms-api</artifactId>-->
-<!--            <version>19.3.1</version>-->
+<!--            <version>19.4.1</version>-->
 <!--        </dependency>-->
 
     </dependencies>
 
-<!--    <repositories>-->
-<!--        <repository>-->
-<!--            <id>coralglobal-nexus</id>-->
-<!--            <url>http://nexus1.coralglobal.cn/repository/maven-public/</url>-->
-<!--        </repository>-->
-<!--    </repositories>-->
+    <repositories>
+        <repository>
+            <id>coralglobal-nexus</id>
+            <url>http://nexus1.coralglobal.cn/repository/maven-public/</url>
+        </repository>
+    </repositories>
 
     <!-- 备份 -->
 <!--    <repositories>-->

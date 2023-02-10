@@ -1,6 +1,7 @@
 package com.chen.test;
 
 import cn.hutool.core.io.file.FileReader;
+import cn.hutool.core.lang.UUID;
 import cn.hutool.core.lang.Validator;
 import cn.hutool.core.text.csv.CsvUtil;
 import cn.hutool.core.text.csv.CsvWriteConfig;
@@ -10,7 +11,9 @@ import cn.hutool.extra.pinyin.PinyinUtil;
 import cn.hutool.poi.excel.BigExcelWriter;
 import cn.hutool.poi.excel.ExcelUtil;
 import com.alibaba.fastjson.JSON;
+import com.alibaba.fastjson.JSONObject;
 import com.baomidou.mybatisplus.core.toolkit.IdWorker;
+import com.chen.constant.UrlConstant;
 import com.chen.mysql.master.model.Student;
 import com.chen.proxy.jdk.Maotai;
 import com.chen.proxy.jdk.Wine;
@@ -27,9 +30,12 @@ import org.junit.Test;
 import org.nustaq.offheap.structs.Templated;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.AnnotationConfigApplicationContext;
+import org.springframework.util.StringUtils;
 import redis.clients.jedis.Jedis;
 import redis.clients.jedis.params.SetParams;
 
+import javax.crypto.Mac;
+import javax.crypto.spec.SecretKeySpec;
 import java.io.*;
 import java.lang.reflect.Constructor;
 import java.lang.reflect.Field;
@@ -40,6 +46,7 @@ import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.time.LocalDateTime;
 import java.time.ZoneId;
+import java.time.ZonedDateTime;
 import java.time.format.DateTimeFormatter;
 import java.util.*;
 import java.util.List;
@@ -757,16 +764,16 @@ public class TestDemo {
         }
     }
 
-    @Test
-    public void test60(){
-        //读取本地文件
-        cn.hutool.core.io.file.FileReader fileReader = new FileReader("/Users/chenjianwen/myDisk/file/company_file/picture/18be220e05fbb93f3458773e26584be4.jpg");
-        //将文件转换成字节数组
-        byte[] result = fileReader.readBytes();
-        //通过Base64将字节数组转换成字符串
-        String fileContent = Base64.getEncoder().encodeToString(result);
-        System.out.println(fileContent);
-    }
+//    @Test
+//    public void test60(){
+//        //读取本地文件
+//        cn.hutool.core.io.file.FileReader fileReader = new FileReader("/Users/chenjianwen/myDisk/file/company_file/picture/18be220e05fbb93f3458773e26584be4.jpg");
+//        //将文件转换成字节数组
+//        byte[] result = fileReader.readBytes();
+//        //通过Base64将字节数组转换成字符串
+//        String fileContent = Base64.getEncoder().encodeToString(result);
+//        System.out.println(fileContent);
+//    }
 
     @Test
     public void test61(){
@@ -834,4 +841,286 @@ public class TestDemo {
         maotai.wine();
         System.out.println(maotai);
     }
+
+    @Test
+    public void test65(){
+        System.out.println(IdWorker.getIdStr());
+    }
+
+//    @Test
+//    public void test66(){
+//        String str = "51103950-5fd7-401f-9f3c-d6a5a393e239.{\"hello\":\"world\"}.1633971802";
+//        byte[] bytes = str.getBytes();
+//        String s = Base64.getEncoder().encodeToString(bytes);
+//        System.out.println(s);
+//    }
+
+    @Test
+    public void test67(){
+        JSONObject reqJson = new JSONObject();
+        reqJson.put("external_id", "3049803ajfa");
+        JSONObject jo = new JSONObject();
+        jo.put("registered_name", "cg");
+        reqJson.put("business", jo);
+        reqJson.put("country_iso_code", "IDN");
+        System.out.println(reqJson);
+    }
+
+    @Test
+    public void test68(){
+        String f = "/Users/chenjianwen/myDisk/file/useless/打铁弄应急方案.docx";
+        System.out.println(f.substring(f.lastIndexOf(".")));
+    }
+
+    @Test
+    public void test69(){
+        String uuid = UUID.fastUUID().toString();
+        JSONObject reqJson = new JSONObject();
+        reqJson.put("id", UUID.fastUUID().toString());
+        System.out.println(reqJson);
+        System.out.println(UUID.fastUUID());
+        System.out.println(uuid);
+    }
+
+    @Test
+    public void test70(){
+        JSONObject reqJson = new JSONObject();
+
+
+        JSONObject jo = new JSONObject();
+        jo.put("registered_name", "mahuate1ng");
+        reqJson.put("business", jo);
+
+        reqJson.put("country_iso_code", "IDN");
+        reqJson.put("city", "city");
+        reqJson.put("address", "address");
+        reqJson.put("postal_code", "postal");
+        reqJson.put("external_id", IdWorker.getIdStr());
+        System.out.println(reqJson);
+    }
+
+    /**
+     * 转换标准时间格式
+     * @throws Exception
+     */
+    @Test
+    public void test71() throws Exception {
+        String date = "2022-05-30T02:05:03.683484Z";
+        String tempTime = date.replace("Z", " UTC");
+        SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss.SSS Z");
+        Date d = sdf.parse(tempTime);
+        System.out.println(d);
+        System.out.println(new Date());
+        SimpleDateFormat sdf1 = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
+        String str= sdf1.format(d);
+        System.out.println(str);
+    }
+
+    @Test
+    public void test72(){
+        FileReader fileReader = new FileReader("/Users/chenjianwen/myDisk/WechatIMG168.png");
+        //将文件转换成字节数组
+        byte[] result = fileReader.readBytes();
+        System.out.println(result);
+    }
+
+    @Test
+    public void test73(){
+        String s = "https://images1.coralglobal.cn/auth_images/20220622/3272672690099612.docx";
+        String substring = s.substring(s.lastIndexOf("/") + 1);
+        System.out.println(substring);
+    }
+
+    @Test
+    public void test74() throws ParseException {
+        String s = "2004-07-08";
+        SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd");
+        Date parse = sdf.parse(s);
+        long time1 = parse.getTime();
+        System.out.println(time1);
+        long time = new Date().getTime();
+        System.out.println(time);
+        long e = 18*365*24*3600*1000L;
+        System.out.println(e);
+        long interval = time - time1;
+        System.out.println(interval);
+        if(interval < e){
+            System.out.println("小于18岁");
+        }else{
+            System.out.println("大于18岁");
+        }
+    }
+
+    @Test
+    public void test75() throws ParseException {
+        String str = "342923199303193116";
+        String substring = str.substring(6, str.length() - 4);
+        SimpleDateFormat sdf = new SimpleDateFormat("yyyyMMdd");
+        Date parse = sdf.parse(substring);
+        System.out.println(parse);
+    }
+
+    @Test
+    public void test76(){
+        String s = "http://test;http://my/kaka;https://sofa";
+        String[] split = s.split(";");
+        long count = Arrays.stream(split).count();
+        System.out.println(count);
+    }
+
+    @Test
+    public void test77(){
+        String s = " fa ff fff ";
+//        boolean matches = s.matches("^[a-zA-Z]*");
+        boolean matches = s.matches("^[a-zA-Z\\s]*$");
+        System.out.println(matches);
+    }
+
+    @Test
+    public void test78(){
+        String s = "94bb16f4-9931-4f10-9c1b-f36b003df01f:2b065b49-bf51-4749-a64b-4d6782e5efa3";
+        String s1 = Base64.getEncoder().encodeToString(s.getBytes());
+        System.out.println(s1);
+    }
+
+    @Test
+    public void test79(){
+        String s = "7659874730054151 SHOPEE_000000006 1660023928911210901Neighbor Market_SKN_AIRPAY INTERNAT_008301";
+        if(s.contains("SHOPEE")){
+            System.out.println("shopee");
+        }
+    }
+
+
+    @Test
+    public void test80(){
+        String json = "{\"id\":\"6ad9138b-8d10-4831-b519-5116425f4db9\",\"type\":\"payment\",\"data\":{\"payment_id\":\"c2e80102-060b-412f-9799-51b7b822c0e4\",\"partner_id\":\"b5a7cce6-bff5-41e7-8669-24a2d70d558b\",\"wallet_id\":\"676a972a-0b11-4c9e-a775-b8aa7ad100e4\",\"payment_method_id\":\"051924d1-07b9-4c1e-bb39-fd6c0cf3d00e\",\"payment_method_code\":\"danamon-id\",\"payment_method_provider_code\":\"danamon-id\",\"payment_party_identifier\":{\"bank_account_number\":\"7659929112341107\"},\"external_id\":\"SKN0_20220815000925069361-20220815\",\"payment_reference\":\"7659929112341107 SHOPEE_000000006     1660464010741207001ndqkwryk0_SKN_AIRPAY INTERNAT_0083010\",\"amount\":332200,\"fees\":0,\"status\":\"SUPPORTING-DOCUMENTS-NEEDED\",\"source_country\":\"IDN\",\"source_currency\":\"IDR\",\"has_scheduled_settlement\":false,\"version\":5,\"metadata\":{\"event_id\":\"831259d3-5eb9-468d-8b9f-c4693a049472\",\"request_trace_id\":\"56gf-2dl5p7m\"},\"notification_date\":\"2022-08-15T03:30:02.772139Z\",\"creation_date\":\"2022-08-15T03:30:02.772139Z\",\"update_date\":\"2022-08-15T03:30:05.239674Z\"}}\n";
+        JSONObject jsonObject = JSONObject.parseObject(json);
+        JSONObject data = jsonObject.getJSONObject("data");
+        JSONObject sender = data.getJSONObject("sender");
+        if(sender != null){
+            String name = sender.getString("name");
+            System.out.println(name);
+        }
+    }
+
+
+    @Test
+    public void test81(){
+        String s = "PNG";
+        System.out.println(s.toLowerCase());
+    }
+
+    @Test
+    public void test82(){
+        String json =  "{\"id\":\"5c518a40-238a-4f7b-92d1-f6aba75382a9\",\"type\":\"payment\",\"data\":{\"payment_id\":\"cf2967d8-18dc-4169-b38f-29f61b808309\",\"partner_id\":\"b5a7cce6-bff5-41e7-8669-24a2d70d558b\",\"wallet_id\":\"af60623a-2268-48f3-b07d-7ec93fcc64fe\",\"payment_method_id\":\"716c799a-e3ad-4b68-8e1a-66cba2af583e\",\"payment_method_code\":\"virtual-accounts-id\",\"payment_method_provider_code\":\"xfers-id\",\"payment_party_identifier\":{\"bank_account_number\":\"8848095720824116\"},\"external_id\":\"contract_4e783e05aa1d4667b19db671a6660831\",\"payment_reference\":\"SAFECASH0102202208311421059519\",\"amount\":10766,\"fees\":2775,\"status\":\"SUPPORTING-DOCUMENTS-NEEDED\",\"source_country\":\"IDN\",\"source_currency\":\"IDR\",\"has_scheduled_settlement\":true,\"version\":5,\"metadata\":{\"event_id\":\"dfb34a22-e113-46ce-b6a4-41e05f55ac3a\",\"request_trace_id\":\"56gf-2dh8fde\"},\"notification_date\":\"2022-09-13T14:49:03.905977Z\",\"creation_date\":\"2022-09-07T03:39:17Z\",\"update_date\":\"2022-09-13T14:49:06.543043Z\"}}";
+        JSONObject jsonObject = JSONObject.parseObject(json);
+        JSONObject data = jsonObject.getJSONObject("data");
+        String notificationDate = data.getString("notification_date");
+        String creationDate = data.getString("creation_date");
+        String updateDate = data.getString("update_date");
+        System.out.println(notificationDate);
+        System.out.println(creationDate);
+        System.out.println(updateDate);
+    }
+
+    @Test
+    public void test83() throws ParseException {
+        String time = "2022-09-07T03:39:17Z";
+//        String time = "2022-09-13T14:49:06.543043Z";
+        String tempTime = time.replace("Z", " UTC");
+        SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss.SSS Z");
+        Date d = sdf.parse(tempTime);
+        System.out.println(d);
+    }
+
+    @Test
+    public void test84() throws ParseException {
+        String s = formatTimeZoneToCST("2022-09-13T14:49:06.543043Z", "");
+        System.out.println(s);
+        Date parse = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss").parse(s);
+        System.out.println(parse);
+    }
+    public static String formatTimeZoneToCST(String utcStr, String format) {
+        if (StringUtils.isEmpty(utcStr)) {
+            return "";
+        }
+        if (StringUtils.isEmpty(format)) {
+            format = "yyyy-MM-dd HH:mm:ss";
+        }
+        String result;
+        ZonedDateTime parse = ZonedDateTime.parse(utcStr);
+        ZonedDateTime zonedDateTime = parse.withZoneSameInstant(ZoneId.of("Asia/Shanghai"));
+        result = zonedDateTime.format(DateTimeFormatter.ofPattern(format));
+        return result;
+    }
+
+    @Test
+    public void test85() throws Exception {
+        System.out.println(transDate("2022-09-13T14:49:06.543043Z"));
+    }
+    public Date transDate(String time) throws Exception {
+        String format = "yyyy-MM-dd HH:mm:ss";
+        ZonedDateTime parse = ZonedDateTime.parse(time);
+        ZonedDateTime zonedDateTime = parse.withZoneSameInstant(ZoneId.of("Asia/Shanghai"));
+        String result = zonedDateTime.format(DateTimeFormatter.ofPattern(format));
+        Date d = new SimpleDateFormat(format).parse(result);
+        return d;
+    }
+
+    @Test
+    public void test86(){
+        String s = "The Hongkong and Shanghai Banking Corporation Limited|HKG";
+        String b = s.substring(0, s.lastIndexOf("|"));
+        String c = s.substring(s.lastIndexOf("|")+1);
+        System.out.println(b);
+        System.out.println(c);
+    }
+
+    @Test
+    public void test87(){
+        String json = "{\"id\":\"1c5a8073-ffae-467e-865d-ffcfd10da212\",\"type\":\"payment\",\"data\":{\"payment_id\":\"b7a21864-3dd4-41d6-a459-9d2ec8d67da2\",\"partner_id\":\"b5a7cce6-bff5-41e7-8669-24a2d70d558b\",\"wallet_id\":\"f2f9da20-ffaf-435a-bed1-f11b80d85a15\",\"payment_method_id\":\"716c799a-e3ad-4b68-8e1a-66cba2af583e\",\"payment_method_code\":\"virtual-accounts-id\",\"payment_method_provider_code\":\"xfers-id\",\"payment_party_identifier\":{\"bank_account_number\":\"8848095751645420\"},\"external_id\":\"contract_4e741835ba544d779e4f2f39bb1290cd\",\"payment_reference\":\"SAFECASH0102202302031005085240\",\"amount\":50000000,\"fees\":2775,\"status\":\"SUPPORTING-DOCUMENTS-NEEDED\",\"source_country\":\"IDN\",\"source_currency\":\"IDR\",\"has_scheduled_settlement\":true,\"version\":5,\"metadata\":{\"event_id\":\"abf3ca58-f742-4c9d-bc84-344f5fe6a989\",\"request_trace_id\":\"56gf-2ddvj09\"},\"notification_date\":\"2023-02-07T07:37:10.659109Z\",\"creation_date\":\"2023-02-06T03:14:05Z\",\"update_date\":\"2023-02-07T07:37:15.140226Z\"}}";
+        JSONObject jsonObject = JSONObject.parseObject(json);
+        String id = jsonObject.getString("id");
+        String type = jsonObject.getString("type");
+        String name = null;
+        String hasScheduledSettlement = null;
+        String version = null;
+        JSONObject data = jsonObject.getJSONObject("data");
+        String paymentId = data.getString("payment_id");
+        String partnerId = data.getString("partner_id");
+        String walletId = data.getString("wallet_id");
+        String paymentMethodId = data.getString("payment_method_id");
+        String paymentMethodCode = data.getString("payment_method_code");
+        JSONObject paymentPartyIdentifier = data.getJSONObject("payment_party_identifier");
+        String bankAccountNumber = paymentPartyIdentifier.getString("bank_account_number");
+        String externalId = data.getString("external_id");
+        String paymentReference = data.getString("payment_reference");
+        BigDecimal amount = data.getBigDecimal("amount");
+        BigDecimal fees = data.getBigDecimal("fees");
+        String status = data.getString("status");
+        String sourceCountry = data.getString("source_country");
+        String sourceCurrency = data.getString("source_currency");
+        JSONObject sender = data.getJSONObject("sender");
+        if(sender != null){
+            name = sender.getString("name");
+        }
+        String settlementDate = data.getString("settlement_date");
+        Boolean hasScheduledSettlementBoolean = data.getBoolean("has_scheduled_settlement");
+        if(hasScheduledSettlementBoolean != null){
+            hasScheduledSettlement = hasScheduledSettlementBoolean.toString();
+        }
+        Integer versionInteger = data.getInteger("version");
+        if(versionInteger != null){
+            version = versionInteger.toString();
+        }
+        JSONObject metadata = data.getJSONObject("metadata");
+        String eventId = metadata.getString("event_id");
+        String requestTraceId = metadata.getString("request_trace_id");
+        String notificationDate = data.getString("notification_date");
+        String creationDate = data.getString("creation_date");
+        String updateDate = data.getString("update_date");
+        System.out.println("123");
+    }
 }
+
