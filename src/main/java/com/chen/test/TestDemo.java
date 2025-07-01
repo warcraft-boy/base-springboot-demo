@@ -1,5 +1,9 @@
 package com.chen.test;
 
+import cn.coralglobal.message.api.exception.MessageCenterSendException;
+import cn.coralglobal.message.api.support.RegexConstant;
+import cn.hutool.core.date.DateTime;
+import cn.hutool.core.date.DateUtil;
 import cn.hutool.core.io.file.FileReader;
 import cn.hutool.core.lang.UUID;
 import cn.hutool.core.lang.Validator;
@@ -7,7 +11,12 @@ import cn.hutool.core.text.csv.CsvUtil;
 import cn.hutool.core.text.csv.CsvWriteConfig;
 import cn.hutool.core.text.csv.CsvWriter;
 import cn.hutool.core.util.CharsetUtil;
+import cn.hutool.core.util.StrUtil;
 import cn.hutool.extra.pinyin.PinyinUtil;
+import cn.hutool.http.HttpRequest;
+import cn.hutool.http.HttpResponse;
+import cn.hutool.http.HttpUtil;
+import cn.hutool.json.JSONUtil;
 import cn.hutool.poi.excel.BigExcelWriter;
 import cn.hutool.poi.excel.ExcelUtil;
 import com.alibaba.fastjson.JSON;
@@ -19,8 +28,12 @@ import com.chen.proxy.jdk.Maotai;
 import com.chen.proxy.jdk.Wine;
 import com.chen.redis.RedisUtil;
 import com.chen.test.demo2.UpperNumberUtil;
+import com.chen.test.model.UserEs;
 import com.itextpdf.text.*;
 import com.itextpdf.text.pdf.PdfWriter;
+import io.reactivex.Completable;
+import io.swagger.models.auth.In;
+import lombok.var;
 import net.sourceforge.pinyin4j.PinyinHelper;
 import net.sourceforge.pinyin4j.format.HanyuPinyinCaseType;
 import net.sourceforge.pinyin4j.format.HanyuPinyinOutputFormat;
@@ -42,8 +55,16 @@ import java.lang.reflect.Field;
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
 import java.math.BigDecimal;
+import java.math.BigInteger;
+import java.nio.ByteBuffer;
+import java.nio.IntBuffer;
+import java.nio.channels.FileChannel;
+import java.nio.charset.StandardCharsets;
+import java.text.DateFormat;
+import java.text.DecimalFormat;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
+import java.time.Instant;
 import java.time.LocalDateTime;
 import java.time.ZoneId;
 import java.time.ZonedDateTime;
@@ -51,9 +72,12 @@ import java.time.format.DateTimeFormatter;
 import java.util.*;
 import java.util.List;
 import java.util.concurrent.atomic.AtomicInteger;
+import java.util.function.Function;
+import java.util.function.Predicate;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 import java.util.stream.Collectors;
+import java.util.stream.Stream;
 
 /**
  * @Description: <br>
@@ -1121,6 +1145,903 @@ public class TestDemo {
         String creationDate = data.getString("creation_date");
         String updateDate = data.getString("update_date");
         System.out.println("123");
+    }
+
+    @Test
+    public void test88() throws ParseException {
+        long dayMill = 24*3600*1000;
+        Date date = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss").parse("2022-08-20 16:01:23");
+        long mill = new Date().getTime() - date.getTime();
+        long day = mill/dayMill;
+        System.out.println(day);
+    }
+
+    @Test
+    public void test89() throws ParseException {
+        Calendar startCalendar = Calendar.getInstance();
+        startCalendar.setTime(new SimpleDateFormat("yyyy-MM-dd HH:mm:ss").parse("2022-08-20 16:01:23"));
+        Calendar endCalendar = Calendar.getInstance();
+        endCalendar.setTime(new Date());
+
+    }
+
+    @Test
+    public void test90() throws ParseException {
+        Date date = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss").parse("2022-08-20 16:01:23");
+        Date date2 = new Date();
+        long time = date.getTime();
+        long time1 = date2.getTime();
+        long t = 0;
+        if(time >= time1){
+            t = time;
+        }else{
+            t = time1;
+        }
+        System.out.println(t);
+    }
+
+    @Test
+    public void test91() throws ParseException {
+        Date date = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss").parse("2022-03-15 11:22:30");
+        long day = 24*3600*1000;
+        long time = new Date().getTime();
+        long d = (time - date.getTime())/day;
+        System.out.println(d);
+    }
+
+    @Test
+    public void test92(){
+        BigDecimal b1 = new BigDecimal("158991300.00");
+        BigDecimal b2 = new BigDecimal("193991300.00");
+        System.out.println(b1.add(b2));
+    }
+
+    @Test
+    public void test93(){
+        Map<String, Object> paramMap = new HashMap();
+        List<String> list = new ArrayList<>();
+        list.add("ChenJevin@163.com");
+        paramMap.put("tos", list);
+        paramMap.put("subject", "subject");
+        paramMap.put("text", "text");
+        paramMap.put("requestId", "472f37e3-a803-47ed-b9b6-32632895b333");
+        paramMap.put("timestamp", "1642747436113");
+        paramMap.put("from", "service@coralglobal.cn");
+        String result2 = HttpRequest.post("http://test-email-api.coralglobal.cn/email/send/txt")
+                .contentType("application/json")
+                .body(JSONUtil.toJsonStr(paramMap))//表单内容
+                .timeout(20000)//超时，毫秒
+                .execute().body();
+        System.out.println(result2);
+    }
+
+    @Test
+    public void test94(){
+        String s = "ljkl.png,jjjj.jpg,kkkk.eng";
+        String[] strings = s.split(",");
+        ArrayList<String> list = new ArrayList<>();
+        for(int i = 0; i < strings.length; i++){
+            list.add(strings[i]);
+        }
+        System.out.println(list);
+    }
+
+    @Test
+    public void test95(){
+        String str = "ljkl.png,werwerw434242";
+        String fileName = str.substring(0, str.lastIndexOf(","));
+        String id = str.substring(str.lastIndexOf(",")+1);
+        System.out.println(fileName);
+        System.out.println(id);
+    }
+
+    @Test
+    public void test96(){
+        String str = "7659102454640955_SKN_Shopee Seller W_5350056";
+        if(str.toLowerCase().contains("shopee")){
+            System.out.println("SHOPEE");
+        }
+        String s = str.toLowerCase();
+        System.out.println(s);
+    }
+
+    @Test
+    public void test97(){
+        IntBuffer allocate = IntBuffer.allocate(11);
+        for(int i = 0; i < 2; i++){
+            int random = new Random().nextInt();
+            allocate.put(random);
+        }
+        allocate.flip();
+        System.out.println("position>>" + allocate.position() + ";limit>>" + allocate.limit() + ";capacity>>" + allocate.capacity());
+        while(allocate.hasRemaining()){
+            System.out.println(allocate.get());
+        }
+        System.out.println("position>>" + allocate.position() + ";limit>>" + allocate.limit() + ";capacity>>" + allocate.capacity());
+    }
+
+    @Test
+    public void test98() throws Exception {
+        FileChannel inChannel = new RandomAccessFile("/Users/chenjianwen/myDisk/diao.jpg", "rw").getChannel();
+        FileChannel outChannel = new RandomAccessFile("/Users/chenjianwen/myDisk/diaosi.jpg", "rw").getChannel();
+        ByteBuffer buff = ByteBuffer.allocate(1024);
+        while(inChannel.read(buff) != -1){
+            buff.flip();
+            outChannel.write(buff);
+            buff.clear();
+        }
+        inChannel.close();
+        outChannel.close();
+    }
+
+    @Test
+    public void test99(){
+        String str = "仅";
+        String pinyin = PinyinUtil.getPinyin(str);
+//        String firstName = pinyin.substring(0, pinyin.indexOf(" ")); //姓
+        String firstAlphabet =  pinyin.substring(0,1); //姓首字母
+        String leftAlphabet = pinyin.substring(1); //姓后面字母
+        String surName = firstAlphabet.toUpperCase() + leftAlphabet; //姓首字母大写
+        System.out.println(surName);
+    }
+
+    @Test
+    public void test100(){
+        String key8 = "1684305199";
+        String key4 = "15552000";
+        long val = (Long.valueOf(key4) + Long.valueOf(key8)) * 1000;
+        String date = DateUtil.date(val).toDateStr();
+        System.out.println(date);
+    }
+
+    @Test
+    public void test101(){
+        long val = System.currentTimeMillis();
+        DateTime date = DateUtil.date(val);
+        System.out.println(date);
+    }
+
+    @Test
+    public void test102(){
+        String str = "1688527754217";
+//        String str = "1684305199";
+        long val = Long.valueOf(str);
+        DateTime date = DateUtil.date(val);
+        System.out.println(date);
+    }
+
+    @Test
+    public void test103(){
+        String s = "Room 2394, Building 2, No. 1150 Lanfeng Road, Fengxian District, Shanghai Room 2394, Building 2, No. 1150 Lanfeng";
+        System.out.println(s.length());
+        String substring = s.substring(0, 4);
+        System.out.println(substring);
+        System.out.println(substring.length());
+    }
+
+    @Test
+    public void test104(){
+        String bankName = "封航（杭州银行）fenh";
+        String before = StrUtil.subBefore(bankName, "（", false);
+        System.out.println(before);
+    }
+
+    @Test
+    public void test105() throws Exception {
+        Class<?> aClass = Class.forName("com.chen.nio.NioTest1");
+        Class<?> aClass1 = ClassLoader.getSystemClassLoader().loadClass("com.chen.nio.NioTest1");
+        System.out.println(aClass);
+        System.out.println(aClass1);
+    }
+
+    @Test
+    public void test106(){
+        String s = "{\"callback_url\":\"https://afinpay-api.coralglobal.cn/transfer/callback\",\"beneficiary\":{\"firstname\":\"SILUTION LIMITED\",\"address\":\"Flat A,Floor 15, Manly Commercial Building,15 Soy Street, Mong Kok, Kowloon, Hong Kong\",\"lastname\":\"SILUTION LIMITED\"},\"receiving_business\":{\"registered_name\":\"SILUTION LIMITED\",\"address\":\"Flat A,Floor 15, Manly Commercial Building,15 Soy Street, Mong Kok, Kowloon, Hong Kong\"},\"purpose_of_remittance\":\"SERVICE_CHARGES\",\"external_id\":\"1694225735202897922\",\"document_reference_number\":\"1694225734874558466\",\"credit_party_identifier\":{\"swift_bic_code\":\"SCBLHKHH\",\"bank_account_number\":\"47416653607\",\"branch_number\":\"SCBLHKHH\",\"account_type\":\"SAVINGS\"},\"sending_business\":{\"registered_name\":\"Thunder Lighting Hong Kong Limited\",\"country_iso_code\":\"HKG\",\"address\":\"Kowloon City District, Kowloon, Hong Kong Special Administrative Region/Room F 6/F MEGA CUBE NO.8 WANG KW\",\"code\":\"23051111560901723\",\"registration_number\":\"3049332\"}}";
+
+    }
+
+    @Test
+    public void test107(){
+        String a = "abc";
+        String b = "abc";
+        System.out.println(a == b);
+        System.out.println(a.equals(b));
+    }
+
+    @Test
+    public void test108(){
+        String s = "23082910343302957;23082910082602412;23082910021502609;23082910000602891;23082909591502280;23082909563502893;23082816553202472;23082816310002726;23082816323102455;23082815533802115";
+        String[] split = s.split(";");
+        for(String a : split){
+            System.out.println(a);
+        }
+    }
+
+    @Test
+    public void test109(){
+        List<String> list = Arrays.asList("a","b","c","hello","girl");
+        Optional<String> any = list.stream().filter(x -> x.length() > 3).findAny();
+        Optional<String> first = list.stream().filter(x -> x.length() > 3).findFirst();
+        String s = any.get();
+        System.out.println(s);
+    }
+
+    @Test
+    public void test110(){
+        List<String> list = Arrays.asList("c", "go", "java", "hello world", "python", "come on", "cnmlgb");
+        Predicate<String> p1 = x -> x.startsWith("c");
+        Predicate<String> p2 = y -> y.length() > 3;
+        Predicate<String> p3 = z -> z.contains("l");
+        list.stream().filter(p1.and(p2).and(p3)).forEach(System.out::println);
+    }
+
+    @Test
+    public void test111(){
+        UserEs name1 = new UserEs("name1", 1);
+        UserEs name2 = new UserEs("name2", 2);
+        UserEs name3 = new UserEs("name3", 3);
+        UserEs name4 = new UserEs("name4", 3);
+        UserEs name5 = new UserEs("name5", 2);
+        UserEs name6 = new UserEs("name6", 6);
+        List<UserEs> list = new ArrayList<>();
+        list.add(name1);
+        list.add(name2);
+        list.add(name3);
+        list.add(name4);
+        list.add(name5);
+        list.add(name6);
+
+        Predicate<UserEs> p1 = x -> x.getAge() > 3;
+        Predicate<UserEs> p2 = x -> x.getName().equals("name6");
+
+        boolean b = list.stream().anyMatch(userEs -> userEs.getAge() == 7);
+        Map<Integer, List<UserEs>> collect = list.stream().collect(Collectors.groupingBy(UserEs::getAge));
+        for(Map.Entry<Integer, List<UserEs>> entry : collect.entrySet()){
+            Integer key = entry.getKey();
+            List<UserEs> value = entry.getValue();
+        }
+    }
+
+    @Test
+    public void test112(){
+        Stream<List<Integer>> listStream = Stream.of(Arrays.asList(1, 2), Arrays.asList(2, 3, 4, 5));
+        listStream.flatMap(x -> x.stream()).forEach(System.out::println);
+    }
+
+    @Test
+    public void test113(){
+        Stream<String> you = Stream.of("you", "and", "me", "and");
+        you.distinct().forEach(str -> System.out.println(str));
+    }
+
+    @Test
+    public void test114(){
+        Stream<Integer> sort = Stream.of(4, 2, 8, 1, 5, 2, 9);
+        sort.sorted((x, y) -> y-x).forEach(z -> System.out.print(z));
+    }
+
+    @Test
+    public void test115(){
+        String str = "adfajl.png;lka.jpg;23424.png";
+        String[] split = str.split(";");
+        List<String> strings = Arrays.asList(split);
+        System.out.println(strings);
+    }
+
+    @Test
+    public void test116(){
+        Stream<String> stream = Stream.of("I", "love", "you", "too");
+//        List<String> list = stream.collect(Collectors.toList()); // (1)
+//        Set<String> set = stream.collect(Collectors.toSet()); // (2)
+        Map<String, Integer> map = stream.collect(Collectors.toMap(Function.identity(), String::length)); // (3)
+//        System.out.println(list);
+//        System.out.println(set);
+        System.out.println(map);
+    }
+
+    @Test
+    public void test117(){
+        String s = null;
+        if(org.apache.commons.lang3.StringUtils.isBlank(s)){
+            System.out.println(1);
+        }else {
+            System.out.println(2);
+        }
+    }
+
+    @Test
+    public void test118(){
+        Stream<String> stream = Stream.of("I", "love", "you", "too");
+//        List<String> list = stream.collect(Collectors.toList()); // (1)
+//        Set<String> set = stream.collect(Collectors.toSet()); // (2)
+        //指定集合类型
+        ArrayList<String> list = stream.collect(Collectors.toCollection(ArrayList::new));
+//        HashSet<String> set = stream.collect(Collectors.toCollection(HashSet::new));
+
+        System.out.println(list);
+//        System.out.println(set);
+    }
+
+    @Test
+    public void test119(){
+        Stream<String> stream = Stream.of("I", "love", "you", "too");
+//        String collect = stream.collect(Collectors.joining()); // Iloveyoutoo
+//        String collect = stream.collect(Collectors.joining(",")); // I,love,you,too
+        String collect = stream.collect(Collectors.joining(",", "{", "}")); // {I,love,you,too}
+        System.out.println(collect);
+    }
+
+    @Test
+    public void test120(){
+        String s = "https://www.vinted.co.uk/member/160391656-wringramiel5";
+        String[] split = s.split("/");
+        System.out.println(split[0]);
+        System.out.println(split[1]);
+        System.out.println(split[2]);
+        System.out.println(split[3]);
+        System.out.println(split[4]);
+        String[] split1 = split[4].split("-");
+        System.out.println(split1[0]);
+        System.out.println(split1[1]);
+        if(split1[0].matches("^[0-9]*$")){
+            System.out.println(true);
+        }else{
+            System.out.println(false);
+        }
+
+    }
+
+    @Test
+    public void test121(){
+        Integer a = 13;
+        Integer b = 5;
+        BigDecimal divide = new BigDecimal(b).divide(new BigDecimal(a), 2, BigDecimal.ROUND_HALF_DOWN);
+        if(divide.compareTo(new BigDecimal("0.3")) == -1){
+            System.out.println("小于0.3");
+        }else {
+            System.out.println("大于0.3");
+        }
+    }
+
+    @Test
+    public void test122(){
+        String s = "94bb16f4-9931-4f10-9c1b-f36b003df01f";
+        System.out.println(s.length());
+    }
+
+    @Test
+    public void test123(){
+        HttpRequest httpRequest = HttpRequest.get("https://www.vinted.it/member/141405001");
+        System.out.println(httpRequest);
+        HttpResponse execute = httpRequest.execute();
+        int status = execute.getStatus();
+        System.out.println(status);
+    }
+
+    @Test
+    public void test124(){
+        String s = HttpUtil.get("https://www.vinted.be/member/141405001");
+        System.out.println(s);
+    }
+
+    @Test
+    public void test125(){
+        String account = "060517052502275";
+        String substring = account.substring(0, 4);
+        int i = account.lastIndexOf(4);
+        System.out.println(i);
+//        String s = account.substring(account.lastIndexOf(4));
+        System.out.println(substring);
+//        System.out.println(s);
+//        String accountStr = account.substring(0, 4) + "**** ****" + account.substring(account.lastIndexOf(4));
+//        System.out.println(accountStr);
+    }
+
+    @Test
+    public void test126(){
+        String s = "2024-01-08 15:48:10";
+        String[] split = s.split(" ");
+        System.out.println(split[0]);
+        System.out.println(split[1]);
+        String yyyy = new SimpleDateFormat("yyyy").format(new Date());
+        System.out.println(yyyy);
+    }
+
+    @Test
+    public void test127(){
+        String s = "MADE DWI SAWITA PUTRA.S.M.";
+        System.out.println(s.length());
+    }
+
+    @Test
+    public void test128(){
+        String s = "2024-01-08";
+        String[] split = s.split("-");
+        System.out.println(split[0]);
+        System.out.println(split[1]);
+        System.out.println(split[2]);
+
+    }
+
+    @Test
+    public void test129(){
+        String birthDateYmd = "2022年10月24日";
+        birthDateYmd = birthDateYmd.replaceAll("年", "-").replaceAll("月", "-").replaceAll("日", "");
+        System.out.println(birthDateYmd);
+    }
+
+    @Test
+    public void test130(){
+        Date date = new Date();
+        TimeZone tz = TimeZone.getTimeZone("UTC");
+        DateFormat df = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss.SSS'Z'");
+        df.setTimeZone(tz);
+        String nowAsISO = df.format(date);
+        System.out.println(nowAsISO);
+    }
+
+    @Test
+    public void test131(){
+        String s = "name";
+        String s1 = "name1";
+        String[] n = new String[]{s, s1};
+        System.out.println(n[0]);
+        System.out.println(n[1]);
+    }
+
+    @Test
+    public void test132(){
+        String sc = "adaf";
+        String sa = "lkfjl,akldfj,ewrer";
+        String[] split = sc.split(",");
+        String[] split1 = sa.split(",");
+        for(String s : split){
+            System.out.println(s);
+        }
+        for(String s : split1){
+            System.err.println(s);
+        }
+    }
+
+    @Test
+    public void test133(){
+        String pdfName = "收款人-kjk.pdf";
+        String encodedFileName = Base64.getEncoder().encodeToString(pdfName.getBytes(StandardCharsets.UTF_8));
+        byte[] decode = Base64.getDecoder().decode(encodedFileName);
+        String name = new String(decode);
+        System.out.println(name);
+    }
+
+    @Test
+    public void test134(){
+        String s = "中国香港";
+        boolean chinese = PinyinUtil.isChinese(s.charAt(0));
+        String res = "";
+        if(chinese){
+            res = PinyinUtil.getPinyin(s);
+        }else{
+            res = s;
+        }
+        System.out.println(res);
+    }
+
+    @Test
+    public void test135(){
+        System.out.println(IdWorker.getIdStr());
+    }
+
+    @Test
+    public void test136(){
+        String json = "{\"id\":\"dd20eb73-dbb2-4566-ba44-e0fc3486a2a7\",\"type\":\"payment\",\"data\":{\"payment_id\":\"79660552-8151-450e-a13d-c082fd583f49\",\"balance_id\":\"391b4555-93ba-400c-acf8-1c8a74663b98\",\"payment_method_id\":\"716c799a-e3ad-4b68-8e1a-66cba2af583e\",\"payment_method_code\":\"virtual-accounts-id\",\"payment_reference\":\"VA0032804836-20240402\",\"amount\":997100,\"fees\":0,\"status\":\"COLLECTED\",\"source_country\":\"IDN\",\"source_currency\":\"IDR\",\"sender\":{\"name\":\"PT TOKOPEDIA\"},\"payment_party_identifier\":{\"bank_account_number\":\"2020230000000360\"},\"notification_date\":\"2024-04-02T01:11:12.506054Z\",\"creation_date\":\"2024-04-02T01:10:27Z\",\"update_date\":\"2024-04-03T05:00:04.004344Z\"}}";
+        JSONObject jsonObject = JSONObject.parseObject(json);
+        JSONObject data = jsonObject.getJSONObject("data");
+        String paymentId = data.getString("payment_id");
+        String partnerId = data.getString("partner_id");
+        String walletId = data.getString("wallet_id");
+        System.out.println(paymentId);
+        System.out.println(partnerId);
+        System.out.println(walletId);
+    }
+
+    @Test
+    public void test137(){
+        String s = "https://www.lazada.com.ph/products/pressure-cooker-new-430-hard-oxidation-pressure-cooker-non-stick-wearproof-explosion-proof-pressure-cooker-3l4l5l7l9l-stainless-stee-pressure-cooker-high-capacity-vacuum-pressure-cooker-easy-to-clean-pressure-cooker-i4402464557-s24741656140.html?c=&channelLpJumpArgs=&clickTrackInfo=query%253APressure%252BCooker%252BNew%252B430%252BHard%252BOxidation%252BPressure%252BCooker%252BNon-Stick%252BWearproof%252BExplosion%252BProof%252BPressure%252BCooker%252B3L%25252F4L%25252F5L%25252F7L%25252F9L%252BStainless%252BStee%252BPressure%252BCooker%252BHigh-Capacity%252BVacuum%252BPressure%252BCooker%252BEasy%252BTo%252BClean%252BPressure%252BCooker%253Bnid%253A4402464557%253Bsrc%253ALazadaMainSrp%253Brn%253Ada365e647a067bec5c475edfca7508c6%253Bregion%253Aph%253Bsku%253A4402464557_PH%253Bprice%253A899%253Bclient%253Adesktologin-api.2.8qya8nqqvk99@docker002";
+        System.out.println(s.length());
+    }
+
+    @Test
+    public void test138(){
+        BigDecimal amount = new BigDecimal("1");
+        DecimalFormat decimalFormat = new DecimalFormat("#,##0.00");
+        String formattedAmount = decimalFormat.format(amount);
+
+        System.out.println("Formatted Amount: " + formattedAmount);
+    }
+
+    @Test
+    public void test139(){
+        String str = "USD";
+        String[] split = str.split(",");
+        List<String> strings = Arrays.asList(split);
+        if(strings.contains("THB")){
+            System.out.println(true);
+        }
+        System.out.println(strings);
+    }
+
+    @Test
+    public void test140(){
+        String s = "账号认证审核，userId = 23102616420501449 的用户复审通过";
+        boolean ind = s.contains("复审通过");
+        System.out.println(ind);
+    }
+
+    @Test
+    public void test141(){
+        String input = "";
+        input = input.replaceAll("[^a-zA-Z]", "");
+        System.out.println("结果" + input);
+    }
+
+    @Test
+    public void test142(){
+        LocalDateTime now = LocalDateTime.now();
+        System.out.println(now);
+        long l = now.atZone(ZoneId.systemDefault()).toEpochSecond();
+        System.out.println(l);
+        Instant instant = now.atZone(ZoneId.systemDefault()).toInstant();
+        Date from = Date.from(instant);
+        System.out.println(from.getTime());
+        String format = new SimpleDateFormat("yyyy-MM-dd HH:mm").format(from);
+        System.out.println(format);
+        Date date = new Date();
+        System.out.println(date.getTime());
+    }
+
+    @Test
+    public void test143() throws ParseException {
+        String str = "2024-05-24 17:49:05";
+        Date date = new SimpleDateFormat("yyyy-MM-dd HH:mm").parse(str);
+        System.out.println(date.getTime());
+    }
+
+    @Test
+    public void test144(){
+        String s = "34/F DAH SING FINANCIAL CENTER 108 GLOUCESTER ROAD HONG KONG";
+        System.out.println(s.length());
+        String substring = s.substring(0, 14);
+        System.out.println(substring);
+    }
+
+    @Test
+    public void test145(){
+        String s = "4,988|Hong Kong";
+        String payerId = s.substring(0, s.lastIndexOf("|"));
+        String country = s.substring(s.lastIndexOf("|")+1);
+        payerId = payerId.replaceAll(",", "");
+        System.out.println(payerId);
+        System.out.println(country);
+    }
+
+    @Test
+    public void test146(){
+        String a = "abc";
+        String b = new String("abc");
+        String c = b.intern();
+        System.out.println(a == b);
+        System.out.println(a == c);
+        System.out.println(b == c);
+    }
+
+    @Test
+    public void test147(){
+        BigDecimal a = new BigDecimal("225");
+        BigDecimal b = new BigDecimal("339");
+        BigDecimal divide = a.divide(b, 2, BigDecimal.ROUND_HALF_DOWN);
+        System.out.println(divide);
+    }
+
+    @Test
+    public void test148(){
+        String s = "12f2f3f0-289c-4e83-a1cf-2076ec76ad2f" + ":" + "3810bd52-1b2a-4f20-874d-0b94d94a53ef";
+        String sig = "Basic " + java.util.Base64.getEncoder().encodeToString(s.getBytes());
+        System.out.println(sig);
+    }
+
+    @Test
+    public void test149(){
+        String url = "http://www.depop.com/";
+        String substring = url.substring(0, url.lastIndexOf("/"));
+        System.out.println(substring);
+        String substring1 = url.substring(url.lastIndexOf("/") + 1);
+        System.out.println(substring1);
+    }
+
+    @Test
+    public void test150(){
+        String url = "https://shopee.vn/555552";
+//        String url = "https://shopee.ph/shop/1232342423";
+        int ind = url.indexOf("shop/");
+        System.out.println(ind);
+        String sellerId = url.substring(url.indexOf("shop/")+5);
+        System.out.println(sellerId);
+    }
+
+    @Test
+    public void test151(){
+        String url = "https://shopee.vn/55555";
+        String substring = url.substring(url.lastIndexOf("/") + 1);
+        System.out.println(substring);
+    }
+
+    @Test
+    public void test152(){
+        String property = System.getProperty("user.dir");
+        System.out.println(property);
+    }
+
+    @Test
+    public void test153(){
+        //获取所有的属性
+        Properties properties = System.getProperties();
+        //遍历所有的属性
+        for (String key : properties.stringPropertyNames()) {
+            //输出对应的键和值
+            System.err.println(key + "=" + properties.getProperty(key));
+        }
+    }
+
+    @Test
+    public void test154(){
+        String str = "xianggangwanwangongsi";
+        System.out.println(str.length());
+        String substring = str.substring(0, 20);
+        System.out.println(substring.length());
+    }
+
+    @Test
+    public void test155(){
+        String url = "http://www.depop.com/店铺/fff.f?";
+        String[] split = url.split("/");
+        System.out.println(split.length);
+        String name = "";
+        for(int i = 3; i < split.length; i++){
+            if(i == split.length - 1){
+                name += split[i];
+            } else {
+                name += split[i] + "/";
+            }
+        }
+        System.out.println(name);
+    }
+
+    @Test
+    public void test156(){
+        String reg = "htt://www.depop.com";
+        if(!("http://www.depop.com".equals(reg) || "https://www.depop.com".equals(reg))){
+            System.out.println("当前店铺URL格式不正确");
+        }else{
+            System.out.println("正确");
+        }
+    }
+
+    @Test
+    public void test157(){
+        Student s = new Student();
+//        Student student = Optional.ofNullable(s).orElseGet(Student::new);
+//        Optional.ofNullable(s).orElseThrow(() -> new RuntimeException());
+        Student student = Optional.ofNullable(s).orElse(s);
+        System.out.println(student);
+    }
+
+    @Test
+    public void test158(){
+        Student s = new Student();
+        s.setId(1);
+        s.setClassId(1);
+        s.setName("lisi");
+        s.setClassName("yiban");
+        Student student = Optional.ofNullable(s).filter(x -> "lisi".equals(x.getName())).get();
+        String s1 = Optional.ofNullable(s).map(x -> x.getName()).get();
+        System.out.println(s1);
+        System.out.println(student);
+    }
+
+    @Test
+    public void test159(){
+        Student s = new Student();
+        s.setId(1);
+        s.setClassId(1);
+        s.setName("lisi");
+        s.setClassName("yiban");
+        Optional<Student> op = Optional.ofNullable(s);
+        op.map(x -> {
+            x.setName("zhangsan");
+            return x;
+        });
+        Student student = op.get();
+        System.out.println(student);
+    }
+
+    @Test
+    public void test160(){
+        Student s1 = new Student();
+        s1.setId(1);
+        s1.setClassId(1);
+        s1.setName("lisi");
+        s1.setClassName("yiban");
+        Student s2 = new Student();
+        s2.setId(2);
+        s2.setClassId(1);
+        s2.setName("lisi");
+        s2.setClassName("yiban");
+        Student s3 = new Student();
+        s3.setId(3);
+        s3.setClassId(1);
+        s3.setName("lisi");
+        s3.setClassName("yiban");
+        List<Student> list = new ArrayList<>();
+        list.add(s1);
+        list.add(s2);
+        list.add(s3);
+        Stream<String> stringStream = list.stream().map(x -> {
+            return x.getName();
+        });
+        List<String> collect = stringStream.collect(Collectors.toList());
+        System.out.println(collect);
+    }
+
+    @Test
+    public void test161(){
+        String timeRegex = "^((([0-9]{3}[1-9]|[0-9]{2}[1-9][0-9]{1}|[0-9]{1}[1-9][0-9]{2}|[1-9][0-9]{3})-(((0[13578]|1[02])-(0[1-9]|[12][0-9]|3[01]))|((0[469]|11)-(0[1-9]|[12][0-9]|30))|(02-(0[1-9]|[1][0-9]|2[0-8]))))|((([0-9]{2})(0[48]|[2468][048]|[13579][26])|((0[48]|[2468][048]|[3579][26])00))-02-29))\\s+([0-1]?[0-9]|2[0-3]):([0-5][0-9]):([0-5][0-9])$";
+        boolean flag = Pattern.matches(timeRegex, "2013-12-31 12:01:51");
+        System.out.println(flag);
+    }
+
+    @Test
+    public void test162(){
+        String str = "山东省青岛市崂山区东路85号附贰12号楼601户";
+        int count = str.indexOf("香港");
+        System.out.println(count);
+    }
+
+    @Test
+    public void test163(){
+        String url = "https://www.leboncoin.fr/profile/";
+        String[] split = url.split("/");
+        System.out.println(split.length);
+        String reg = split[0] + "/" + split[1] + "/" + split[2] + "/" + split[3];
+        System.out.println(reg);
+    }
+
+
+    @Test
+    public void test164(){
+        int[] arr = new int[]{1,2,6,7,8};
+        int val = 3;
+        for(int i = 0; i < arr.length; i++){
+            for(int j = i+1; j < arr.length; j++){
+                int tempValue = arr[i] + arr[j];
+                if(val == tempValue){
+                    System.out.println(i + ":" +arr[i]);
+                    System.out.println(j + ":" +arr[j]);
+                }
+            }
+        }
+    }
+
+    @Test
+    public void test165(){
+        String str1 = "ABCBDAB";
+        String str2 = "BDCABA";
+        char[] char1 = str1.toCharArray();
+        char[] char2 = str2.toCharArray();
+        StringBuffer stringBuffer = new StringBuffer();
+        for(int i = 0; i <char2.length; i++){
+            if(char1[i] == char2[i]){
+                stringBuffer.append(char1[i]);
+            }
+        }
+        System.out.println(stringBuffer);
+    }
+
+    @Test
+    public void test166(){
+        int[] prices = new int[]{7,1,5,3,6,4};
+        List<Integer> list = new ArrayList<>();
+        for(int i = 0 ; i < prices.length; i++){
+            int original = prices[i];
+            for(int j = i+1; j < prices.length; j++){
+                int end = prices[j];
+                list.add(end - original);
+            }
+        }
+        list.sort(new Comparator<Integer>() {
+            @Override
+            public int compare(Integer o1, Integer o2) {
+                return o1 - o2;
+            }
+        });
+        System.out.println(list.get(list.size() - 1));
+    }
+
+    @Test
+    public void test167(){
+        int[] arr = new int[]{5, 2, 9, 1, 7};
+        for(int i = 0 ; i < arr.length; i++){
+            for(int j = i + 1; j < arr.length; j++){
+                if(arr[i] > arr[j]){
+                    int temp = arr[i];
+                    arr[i] = arr[j];
+                    arr[j] = temp;
+                }
+            }
+        }
+        for(int i = 0; i < arr.length; i++){
+            System.out.println(arr[i]);
+        }
+    }
+
+    @Test
+    public void test168(){
+        System.out.println(isPalindrome(1234321));
+        System.out.println(isPalindrome(123432));
+        System.out.println(isPalindrome(1234));
+        System.out.println(isPalindrome(12344321));
+    }
+
+    private boolean isPalindrome(int x){
+        String xStr = String.valueOf(x);
+        char[] charArray = xStr.toCharArray();
+        StringBuilder str = new StringBuilder("");
+        for(int i = charArray.length - 1; i >= 0; i--){
+            str.append(charArray[i]);
+        }
+        return xStr.equals(str.toString());
+    }
+
+    private int index(int[] arr, int n){
+        int pre = 0, suff = arr.length - 1;
+        while(true){
+            if(arr[suff/2] == n){
+                return suff/2;
+            }else if(arr[suff/2] > n) {
+                suff = suff/2;
+            }else {
+                pre = suff/2;
+            }
+        }
+    }
+
+    @Test
+    public void test169(){
+        List<String> strings = new ArrayList<>();
+        strings.add("Alice");
+        strings.add("David");
+        strings.add("Chalin");
+        strings.add("Bob");
+        Collections.sort(strings, String::compareTo);
+        System.out.println(strings);
+    }
+
+    @Test
+    public void test170(){
+        List<String> list = Arrays.asList("c", "go", "java", "hello world", "python", "come on", "cnmlgb");
+        Predicate<String> p1 = (x) -> x.startsWith("c");
+        Predicate<String> p2 = (y) -> y.length() > 3;
+        list.stream().filter(p1.and(p2)).forEach(System.out::println);
+        list.stream().filter(x -> x.startsWith("c") && x.length() > 3).forEach(System.out::println);
+    }
+
+    @Test
+    public void test171(){
+        List<String> list = Arrays.asList("cs go", "java web", "hello world", "come on");
+        list.stream().flatMap(str -> {
+            String[] s = str.split(" ");
+            return Arrays.stream(s);
+        }).peek(str -> {
+            System.err.println(str);
+        }).forEach(system -> System.out.println(system));
     }
 }
 

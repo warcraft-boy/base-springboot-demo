@@ -20,6 +20,10 @@ public class ThreadDemo {
         tpe = new ThreadPoolExecutor(2, 5, 20, TimeUnit.MILLISECONDS, new ArrayBlockingQueue<>(3), Executors.defaultThreadFactory(), new ThreadPoolExecutor.CallerRunsPolicy());
         for(int i = 0; i < 10; i++){
             tpe.execute(new ThreadTask());
+            //或者这样
+//            tpe.execute(()->{
+//                System.out.println(Thread.currentThread().getName() + "正在执行");
+//            });
         }
     }
 

@@ -4,6 +4,9 @@ import cn.coralglobal.message.api.enums.SmsTypeEnum;
 import cn.coralglobal.message.api.exception.MessageCenterBuilderException;
 import cn.coralglobal.message.api.exception.MessageCenterSendException;
 import cn.coralglobal.message.api.service.*;
+import cn.coralglobal.service.sms.api.core.SmsMessage;
+import cn.coralglobal.service.sms.api.core.SmsTemplate;
+import cn.coralglobal.service.sms.api.exception.ServiceSmsMessageBuildException;
 import cn.hutool.core.io.IoUtil;
 import cn.hutool.core.io.file.FileReader;
 import cn.hutool.core.io.file.FileWriter;
@@ -591,10 +594,10 @@ public class BaseSpringbootDemoApplicationTests {
     }
 
     @Test
-    public void test47() throws MessageCenterBuilderException, MessageCenterSendException {
+    public void test47() throws MessageCenterBuilderException, MessageCenterSendException, Exception {
 //        smsServiceTemplate.sms(SmsSubject.newBuilder().template("1462670599091400705").mobile("13023635020").number("123456").replace("123456").type(SmsTypeEnum.S).build());
-        smsServiceTemplate.sms(SmsSubject.newBuilder().template("1353580357366087682").mobile("13023635020").replace("111").type(SmsTypeEnum.S).build());
-        //smsServiceTemplate.sms(SmsSubject.newBuilder().template("1262258402450292738").mobile("13023635020").type(SmsTypeEnum.V).platform("bilibili").build());
+//        smsServiceTemplate.sms(SmsSubject.newBuilder().template("1353580357366087682").mobile("13023635020").replace("111").type(SmsTypeEnum.S).build());
+        smsServiceTemplate.sms(SmsSubject.newBuilder().template("1262258402450292738").mobile("13023635020").type(SmsTypeEnum.S).platform("bilibili").build());
     }
 
     @Test
@@ -877,5 +880,11 @@ public class BaseSpringbootDemoApplicationTests {
 
     //===============================kafka测试结束=================================
 
+    @Test
+    public void test64(){
+        stringRedisTemplate.opsForValue().set("phone", "13023635020", 10, TimeUnit.MINUTES);
+        String phone = stringRedisTemplate.opsForValue().get("phone");
+        System.out.println(phone);
+    }
 
 }

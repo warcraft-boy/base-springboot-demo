@@ -276,11 +276,11 @@
             <version>2.5.3-SNAPSHOT</version>
         </dependency>
 
-<!--        <dependency>-->
-<!--            <groupId>cn.coralglobal.service</groupId>-->
-<!--            <artifactId>service-sms-api</artifactId>-->
-<!--            <version>19.4.1</version>-->
-<!--        </dependency>-->
+        <dependency>
+            <groupId>cn.coralglobal.service</groupId>
+            <artifactId>service-sms-api</artifactId>
+            <version>19.4.1</version>
+        </dependency>
 
     </dependencies>
 

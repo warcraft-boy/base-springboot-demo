@@ -12,8 +12,8 @@ public class UpperNumberUtil {
     private static final Pattern AMOUNT_PATTERN1 = Pattern.compile("^(0|[1-9]\\d{0,11})\\.(\\d\\d)$"); // 不考虑分隔符的正确性
     private static final Pattern AMOUNT_PATTERN2 = Pattern.compile("^(0|[1-9]\\d{0,11})$"); // 不考虑分隔符的正确性
     private static final char[] RMB_NUMS = "零壹贰叁肆伍陆柒捌玖".toCharArray();
-//    private static final String[] UNITS = { "元", "角", "分", "整" };
-    private static final String[] UNITS = { "点", "整" };
+    private static final String[] UNITS = { "元", "角", "分", "整" };
+//    private static final String[] UNITS = { "点", "整" };
     private static final String[] U1 = { "", "拾", "佰", "仟" };
     private static final String[] U2 = { "", "万", "亿" };
 
@@ -96,5 +96,10 @@ public class UpperNumberUtil {
             }
         }
         return buffer.reverse().toString();
+    }
+
+    public static void main(String[] args) {
+        String convert = convert("0.04");
+        System.out.println(convert);
     }
 }
