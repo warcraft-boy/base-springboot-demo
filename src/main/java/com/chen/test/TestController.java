@@ -1,9 +1,5 @@
 package com.chen.test;
 
-import cn.coralglobal.message.api.exception.MessageCenterBuilderException;
-import cn.coralglobal.message.api.service.EmailFile;
-import cn.coralglobal.message.api.service.EmailServiceTemplate;
-import cn.coralglobal.message.api.service.EmailSubject;
 import cn.hutool.poi.excel.BigExcelWriter;
 import cn.hutool.poi.excel.ExcelUtil;
 import com.alibaba.fastjson.JSON;
@@ -35,8 +31,6 @@ import java.util.List;
 @Controller
 public class TestController {
 
-    @Autowired
-    private EmailServiceTemplate emailServiceTemplate;
 
     @PostMapping("/email/send")
     @ResponseBody
@@ -49,10 +43,10 @@ public class TestController {
         //通过Base64讲字节数组转换为字符串
         String fileContent = Base64.getEncoder().encodeToString(bytes);
         //EmailFile这个对象存储文件名称和文件
-        EmailFile ef= new EmailFile();
-        ef.setFileName(fileName);
-        ef.setFileContent(fileContent);
-        emailServiceTemplate.email(EmailSubject.newBuilder().template("1249577988099248130").email("alichen3116@aliyun.com").platform("base-springboot").file(ef).build());
+//        EmailFile ef= new EmailFile();
+//        ef.setFileName(fileName);
+//        ef.setFileContent(fileContent);
+//        emailServiceTemplate.email(EmailSubject.newBuilder().template("1249577988099248130").email("alichen3116@aliyun.com").platform("base-springboot").file(ef).build());
         return null;
     }
 

@@ -1,12 +1,5 @@
 package com.chen;
 
-import cn.coralglobal.message.api.enums.SmsTypeEnum;
-import cn.coralglobal.message.api.exception.MessageCenterBuilderException;
-import cn.coralglobal.message.api.exception.MessageCenterSendException;
-import cn.coralglobal.message.api.service.*;
-import cn.coralglobal.service.sms.api.core.SmsMessage;
-import cn.coralglobal.service.sms.api.core.SmsTemplate;
-import cn.coralglobal.service.sms.api.exception.ServiceSmsMessageBuildException;
 import cn.hutool.core.io.IoUtil;
 import cn.hutool.core.io.file.FileReader;
 import cn.hutool.core.io.file.FileWriter;
@@ -115,16 +108,6 @@ public class BaseSpringbootDemoApplicationTests {
     private ObjectMapper objectMapper;
 
     public BaseSpringbootDemoApplicationTests(){}
-    @Autowired
-    private MsgCenterServiceTemplate msgCenterServiceTemplate;
-    @Autowired
-    private EmailServiceTemplate emailServiceTemplate;
-    @Autowired
-    private EmailServiceCaptchaTemplate emailCaptchaTemplate;
-    @Autowired
-    private SmsServiceTemplate smsServiceTemplate;
-    @Autowired
-    private SmsServiceCaptchaTemplate smsCaptchaTemplate;
     @Autowired
     private RestHighLevelClient restHighLevelClient;
     @Autowired
@@ -567,46 +550,6 @@ public class BaseSpringbootDemoApplicationTests {
         s.setName("Chen");
         s.setClassName("501");
         studentMapper.insert(s);
-    }
-
-    @Test
-    public void test44() throws MessageCenterBuilderException, MessageCenterSendException {
-        //msgCenterTemplate.msg(MessageSubject.newBuilder().template("1245233580516110337").replace("god is a girl", "10010").users("玛莎拉蒂", "兰博基尼").platform("demo hunter").build());
-        msgCenterServiceTemplate.msg(MessageSubject.newBuilder().template("1245233580516110337").users("she").build());
-    }
-
-    @Test
-    public void test45() throws MessageCenterBuilderException, MessageCenterSendException {
-//        emailServiceTemplate.email(EmailSubject.newBuilder().template("1462617943169871873").email("alichen3116@aliyun.com").number("123456").replace("123456").platform("base-springboot").build());
-//        emailServiceTemplate.email(EmailSubject.newBuilder().template("1462617943169871873").email("alichen3116@aliyun.com").number("666").replace("666").platform("base-springboot").build());
-//        emailServiceTemplate.email(EmailSubject.newBuilder().template("1285138969192845314").email("alichen3116@aliyun.com").replace("kaka").platform("base-springboot").build());
-        //emailServiceTemplate.email(EmailSubject.newBuilder().template("1249578436797501442").email("alichen3116@aliyun.com").platform("base-springboot").replace("chenjianwen", "2020-04-05").build());
-        emailServiceTemplate.email(EmailSubject.newBuilder().template("1249577988099248130").email("ChenJevin@163.com").platform("base-springboot").build());
-
-    }
-
-    @Test
-    public void test46() throws MessageCenterSendException {
-        String value = stringRedisTemplate.opsForValue().get("email:code:1281130574945300481:alichen3116@aliyun.com");
-        System.out.println(value);
-        boolean b = emailCaptchaTemplate.checkCaptcha("1281130574945300481", "alichen3116@aliyun.com", "108090", null);
-        System.out.println(b);
-    }
-
-    @Test
-    public void test47() throws MessageCenterBuilderException, MessageCenterSendException, Exception {
-//        smsServiceTemplate.sms(SmsSubject.newBuilder().template("1462670599091400705").mobile("13023635020").number("123456").replace("123456").type(SmsTypeEnum.S).build());
-//        smsServiceTemplate.sms(SmsSubject.newBuilder().template("1353580357366087682").mobile("13023635020").replace("111").type(SmsTypeEnum.S).build());
-        smsServiceTemplate.sms(SmsSubject.newBuilder().template("1262258402450292738").mobile("13023635020").type(SmsTypeEnum.S).platform("bilibili").build());
-    }
-
-    @Test
-    public void test48() throws MessageCenterSendException {
-        String value = stringRedisTemplate.opsForValue().get("sms:code:1262258402450292738:13023635020");
-        System.out.println(value);
-        boolean b = smsCaptchaTemplate.checkCaptcha("1262258402450292738", "13023635020", "606874", null);
-        System.out.println(b);
-//        stringRedisTemplate.delete("sms:code:1262264766891393025:13023635020");
     }
 
     @Test

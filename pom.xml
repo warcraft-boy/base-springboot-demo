@@ -270,26 +270,9 @@
             <version>3.0.4</version>
         </dependency>
         <!-- message center api -->
-        <dependency>
-            <groupId>cn.coralglobal.service</groupId>
-            <artifactId>message-center-api</artifactId>
-            <version>2.5.3-SNAPSHOT</version>
-        </dependency>
-
-        <dependency>
-            <groupId>cn.coralglobal.service</groupId>
-            <artifactId>service-sms-api</artifactId>
-            <version>19.4.1</version>
-        </dependency>
 
     </dependencies>
 
-    <repositories>
-        <repository>
-            <id>coralglobal-nexus</id>
-            <url>http://nexus1.coralglobal.cn/repository/maven-public/</url>
-        </repository>
-    </repositories>
 
     <!-- 备份 -->
 <!--    <repositories>-->
